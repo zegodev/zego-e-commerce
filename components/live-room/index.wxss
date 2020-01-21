@@ -8,27 +8,198 @@
     width: 100vw;
     height: 100vh;
 }
-.poster {
-    position: relative;
-    margin-top: 400px;
-    width: 30px;
-    height: 30px;
+.modal-hide {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
 }
-.poster image {
-    width: 100%;
-    height: 100%;
-}
-.img-box {
-    width: 100px;
-    height: 20px;
-}
-.img-box text {
-    height: 100%;
-    width: 100%;
+.user-info {
+    /* width: 250rpx; */
+    position: fixed;
+    z-index: 3;
+    top: calc(10vh + 32rpx);
+    left: 25rpx;
+    display: inline-block;
+    height: 80rpx;
+    border-radius: 40rpx;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 8rpx;
     color: #fff;
+    font-size: 26rpx;
+}
+.user-info .avatar {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    margin-right: 16rpx;
+}
+.user-text {
+    margin-right: 30rpx;
+    font-weight: 500;
+}
+.user-count {
+    font-size: 22rpx;
+}
+.new-one {
+    min-width: 200rpx;
+    height: 48rpx;
+    position: fixed;
+    z-index: 2;
+    bottom: 568rpx;
+    background-color: rgba(255,13,64,0.6);
+    color: #fff;
+    padding: 0 16rpx;
+    border-radius: 8rpx;
+    margin-left: 24rpx;
+    font-size: 26rpx;
+    line-height: 48rpx;
+}
+.message-view {
+    width: 568rpx;
+    height: 412rpx;
+    position: fixed;
+    z-index: 3;
+    bottom: 140rpx;
+    margin-left: 24rpx;
+    /* padding-top: 8rpx; */
+}
+.message-detail {
+    margin-top: 8rpx;
+    font-size: 0;
+}
+.message-detail:first-of-type{
+    margin-top: 0;
+}
+.msg-text {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.2);
+    font-size: 28rpx;
+    line-height: 40rpx;
+    color: #fff;
+    padding: 0 16rpx;
+    border-radius: 8rpx;
 }
 .operate {
+    /* position: fixed;
+    z-index: 2; */
+    display: flex;
+    align-items: center;
+}
+.img-box {
+    width: 90rpx;
+    height: 90rpx;
+    margin: 0 2rpx;
+}
+.img-box .img {
+    width: 100%;
+    height: 100%;
+}
+.bot-bg {
+    position: fixed;
+    z-index: 1;
+    bottom: 0;
+    height: 126rpx;
+    width: 100vw;
+    background:linear-gradient(0deg,rgba(0,0,0,1),rgba(0,0,0,0));
+    opacity:0.6;
+}
+.mmprise {
+    position: fixed;
+    z-index: 3;
+    bottom: 0;
+    width: 100vw;
+    height: 126rpx;
+    display: flex;
+    /* padding-left: 24rpx; */
+    /* align-items: baseline; */
+}
+.mmprise-con {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 24rpx;
+    display: flex;
+    justify-content: center;
+}
+.message-input {
+    width: 100%;
+    height: 88rpx;
+    background-color: #fff;
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    position: fixed;
+}
+.message-input .input-conteiner {
+    width:558rpx;
+    height:64rpx;
+    background:rgba(244,244,244,1);
+    border-radius:32rpx;
+    margin: 0 24rpx;
+    padding: 0 20rpx;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+.input-content {
+    flex: 1;
+    height: 28rpx;
+}
+.clear-input {
+    width: 36rpx;
+    height: 36rpx;
+}
+.message-input .send-btn {
+    width:120rpx;
+    height:64rpx;
+    background:rgba(242,3,76,1);
+    border-radius:32rpx;
+    font-size: 30rpx;
+    color: #fff;
+    line-height: 64rpx;
+    text-align: center;
+    /* margin-right: 24rpx; */
+}
+.merchandise-img {
+    width: 96rpx;
+    height: 126rpx;
+}
+.merchandise-img image {
+    width: 100%;
+    height: 100%;
+}
+.input-button {
+    /* width: 410rpx; */
+    flex: 1;
+    height: 70rpx;
+    line-height: 70rpx;
+    color: #fff;
+    margin-top: 28rpx;
+    margin-right: 18rpx;
+    font-size: 26rpx;
+    border-bottom: 2rpx solid rgba(255, 255, 255, 0.2);
+}
+.prise-img-box {
+    position: relative;
+}
+.prise-count {
     position: absolute;
-    top: 0;
-    z-index: 2;
+    height: 26rpx;
+    background: rgba(255,192,0,0.9);
+    border-radius: 13rpx;
+    left: 50%;
+    top: 5rpx;
+    transform: translateX(-50%);
+    min-width: 56rpx;
+    padding: 0 16rpx;
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 18rpx;
+    text-align: center;
 }

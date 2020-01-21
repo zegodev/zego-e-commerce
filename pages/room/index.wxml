@@ -1,2 +1,47 @@
 <!--miniprogram/pages/live/index.wxml-->
-<live zegoAppID="{{zegoAppID}}" loginType="{{loginType}}" logServerURL="{{logServerURL}}"  roomID="{{roomID}}"></live>
+<zego-nav navBarHeight="{{navBarHeight}}" statusBarHeight="{{statusBarHeight}}">
+    <view class="room-title">{{roomShowName}}</view>
+</zego-nav>
+<view class="live-container">
+    <live id="live-room" navBarHeight="{{navBarHeight}}" zegoAppID="{{zegoAppID}}" loginType="{{loginType}}" logServerURL="{{logServerURL}}" roomID="{{roomID}}" bindRoomEvent="onRoomEvent"></live>
+    <view class="modals modals-bottom-dialog" hidden="{{hideModal}}">
+        <!-- <view class="modals-cancel" bindtap="hideModal"></view> -->
+        <view class="bottom-dialog-body bottom-pos" animation="{{animationData}}">
+            <view class="merchandise-container">
+                <view class="merchandise-head">
+                    <view class="m-t">
+                        <image class="m-list-png" src="../../resource/m-list.png"></image>
+                        <view class="m-title">商品列表</view>
+                    </view>
+                    <image class="m-close-png" src="../../resource/m-close.png" bindtap="hideModal"></image>
+                </view>
+                <view class="merchandise-list">
+                    <view wx:for="{{merchandises}}" wx:key="id" class="merchandise-item">
+                        <image class="" src="{{item.img}}"></image>
+                        <view class="merchandise-detail">
+                            <text class="merchandise-text" id="{{index}}" bindtap="clickMech">
+                                {{item.name}}
+                            </text>
+                            <view class="merchandise-action">
+                                <text class="m-price">¥{{item.price}}</text>
+                                <view wx:if="{{loginType === 'anchor'}}" data-indx="{{item.id}}" class="shop-cart" bind:tap="pushMer">
+                                    推送商品
+                                </view>
+                                <view wx:if="{{loginType === 'audience'}}" class="shop-cart">
+                                    加入购物车
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="push-mer" wx:if="{{pushInx >= 0}}" style="bottom:{{meBot}}rpx;">
+        <image class="push-mer-img" src="{{merchandises[pushInx].img}}"></image>
+        <view class="push-mer-detail">
+            <text class="push-mer-text">{{merchandises[pushInx].name}}</text>
+            <text class="push-mer-price">¥{{merchandises[pushInx].price}}</text>
+        </view>
+    </view>
+</view>

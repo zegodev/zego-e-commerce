@@ -141,7 +141,7 @@
 
 .bottom-btn button {
   background-color: #F2034C;
-  line-height: 2.3em;
+  line-height: 80rpx;
   border-radius: 0;
   width: 100%;
   font-size: 26rpx;

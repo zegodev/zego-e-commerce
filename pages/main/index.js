@@ -19,7 +19,7 @@ Page({
             {
                 icon: "../../resource/interactionLive.png",
                 subtitle: '列表',
-                title: "视频直播",
+                title: "电商直播",
                 navigateTo: "../roomList/index"
             },
             // {

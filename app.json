@@ -7,7 +7,7 @@
   ],
   "plugins": {
     "zego-e-commerce": {
-      "version": "dev-0370f49acc16c1a7f4e8874cf6b61def",
+      "version": "1.0.1",
       "provider": "wx2b8909dae7727f25"
     }
   },

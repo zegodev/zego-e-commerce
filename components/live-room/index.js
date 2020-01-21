@@ -7,6 +7,9 @@ let connectType = -1;
 let zgPusher;
 let zgPlayer;
 let priseTotal = 0;
+let iphoneXX = false;
+let iphone6s = false;
+let iphones = ['iPhone X', 'iPhone XR', 'iPhone XS', 'iPhone XS Max', 'iPhone 11'];
 
 Component({
   /**
@@ -16,9 +19,9 @@ Component({
     zegoAppID: {
       type: Number,
       value: 1739272706,
-      observer: function(newVal, oldVal) {
+      observer: function (newVal, oldVal) {
         // this.data.zegoAppID = newVal;
-        // console.error('zegoAppID')
+        // console.log('zegoAppID')
       }
     },
     logServerURL: {
@@ -29,10 +32,14 @@ Component({
       type: String,
       value: ""
     },
+    pushMerTime: {
+      type: Number,
+      value: 10
+    },
     roomID: {
       type: String,
       value: "",
-      observer: function(newVal, oldVal, changedPath) {
+      observer: function (newVal, oldVal, changedPath) {
         // this.setData({ items: newVal });
       }
     },
@@ -43,7 +50,7 @@ Component({
     nickName: {
       type: String,
       value: "",
-      observer: function(newVal, oldVal) {
+      observer: function (newVal, oldVal) {
         // this.data.userName = newVal;
       }
     },
@@ -122,17 +129,23 @@ Component({
     mmBot: 0,
 
     userTop: 0,
+    userInfo: {},
+    hasUserInfo: false,
 
+    avatarUrl: "",
+    nickName: "",
     playUrl: "",
     sid: "",
     isFull: false,
   },
 
-  ready: function() {
+  ready: function () {
+    this.getUserInfo();
+
     console.log(" ", this.data.loginType);
     zgPusher = this.selectComponent("#zg-pusher");
     zgPlayer = this.selectComponent("#zg-player");
-    console.error("zg", zgPusher, zgPlayer);
+    console.log("zg", zgPusher, zgPlayer);
     // if (iphoneXX) {
     //   this.data.mmBot += 68;
     //   this.data.meBot += 68;
@@ -150,16 +163,12 @@ Component({
     });
 
     let timestamp = new Date().getTime();
-    const nickName = this.data.nickName
-      ? this.data.nickName
-      : "xcxU" + timestamp;
-    const avatar = this.data.avatar
-      ? this.data.avatar
-      : "../resource/avatar-logo.png";
+    const nickName = this.data.userInfo.nickName ? this.data.userInfo.nickName : 'xcxU' + timestamp;
+    const avatar = this.data.userInfo.avatarUrl ? this.data.userInfo.avatarUrl : '../images/avatar-logo.png';
     const nickAvatar = {
       nickName: nickName,
       avatar: avatar
-    };
+    }
     this.setData({
       roomName: this.data.roomID,
       // loginType: "anchor",
@@ -168,9 +177,10 @@ Component({
       userName: JSON.stringify(nickAvatar),
       // zegoAppID: ,
       publishStreamID: "xcxS" + timestamp,
-      avatar,
-      nickName
+      avatarUrl: avatar,
+      nickName: nickName
     });
+
 
     zg = new ZegoClient();
     zg.config({
@@ -201,11 +211,6 @@ Component({
     });
 
     this.onNetworkStatus();
-    // wx.getUserInfo({
-    //   success: (res) => {
-    //     console.log('getUserInfo', res);
-    //   }
-    // });
     // 保持屏幕常亮
     wx.setKeepScreenOn({
       keepScreenOn: true
@@ -216,19 +221,30 @@ Component({
    * 组件的方法列表
    */
   methods: {
+    getUserInfo() {
+      let userInfo = wx.getStorageSync("userInfo");
+      console.log('getUserInfo', userInfo);
+      if (userInfo) {
+        this.setData({
+          hasUserInfo: true,
+          userInfo: userInfo
+        });
+      }
+
+    },
     bindCallBack() {
       let self = this;
 
       // startPlayStream、startPublishStream 后，服务端主动推过来的流更新事件
       // type: {play: 0, publish: 1};
-      zg.onStreamUrlUpdate = function(streamid, url, type, reason) {
+      zg.onStreamUrlUpdate = function (streamid, url, type, reason) {
         console.log(
           ">>>[liveroom-room] zg onStreamUrlUpdate, streamId: " +
-            streamid +
-            ", type: " +
-            (type === 0 ? "play" : "publish") +
-            ", url: " +
-            url
+          streamid +
+          ", type: " +
+          (type === 0 ? "play" : "publish") +
+          ", url: " +
+          url
         );
 
         if (type === 1) {
@@ -239,7 +255,7 @@ Component({
       };
 
       // 服务端主动推过来的 连接断开事件
-      zg.onDisconnect = function(err) {
+      zg.onDisconnect = function (err) {
         console.log(">>>[liveroom-room] zg onDisconnect");
         connectType = 0;
         if (!networkOk) {
@@ -266,23 +282,23 @@ Component({
       };
 
       // 服务端主动推过来的 用户被踢掉在线状态事件
-      zg.onKickOut = function(err) {
+      zg.onKickOut = function (err) {
         console.log(">>>[liveroom-room] zg onKickOut");
       };
 
       // 接收服务端主推送的自定义信令
-      zg.onRecvCustomCommand = function(
+      zg.onRecvCustomCommand = function (
         from_userid,
         from_idName,
         custom_content
       ) {
         console.log(
           ">>>[liveroom-room] zg onRecvCustomCommand" +
-            "from_userid: " +
-            from_userid +
-            "from_idName: " +
-            from_idName +
-            "content: "
+          "from_userid: " +
+          from_userid +
+          "from_idName: " +
+          from_idName +
+          "content: "
         );
         console.log("prise custom_content", custom_content);
         const { type, detail } = custom_content;
@@ -295,11 +311,11 @@ Component({
       };
 
       // 服务端主动推过来的 流的创建/删除事件；updatedType: { added: 0, deleted: 1 }；streamList：增量流列表
-      zg.onStreamUpdated = function(updatedType, streamList) {
+      zg.onStreamUpdated = function (updatedType, streamList) {
         console.log(
           ">>>[liveroom-room] zg onStreamUpdated, updatedType: " +
-            (updatedType === 0 ? "added" : "deleted") +
-            ", streamList: "
+          (updatedType === 0 ? "added" : "deleted") +
+          ", streamList: "
         );
         console.log(streamList);
 
@@ -313,17 +329,17 @@ Component({
       };
 
       // 服务端主动推过来的 流信息中的 ExtraInfo更新事件（暂时不用实现）
-      zg.onStreamExtraInfoUpdated = function(streamList) {
+      zg.onStreamExtraInfoUpdated = function (streamList) {
         console.log(">>>[liveroom-room] zg onStreamExtraInfoUpdated");
       };
 
       // 服务端主动推过来的 流的播放状态, 视频播放状态通知
       // type: { start:0, stop:1};
-      zg.onPlayStateUpdate = function(updatedType, streamID) {
+      zg.onPlayStateUpdate = function (updatedType, streamID) {
         console.log(
           ">>>[liveroom-room] zg onPlayStateUpdate, " +
-            (updatedType === 0 ? "start " : "stop ") +
-            streamID
+          (updatedType === 0 ? "start " : "stop ") +
+          streamID
         );
 
         if (updatedType === 1) {
@@ -351,7 +367,7 @@ Component({
       };
 
       // 接收房间IM消息
-      zg.onRecvRoomMsg = function(chat_data, server_msg_id, ret_msg_id) {
+      zg.onRecvRoomMsg = function (chat_data, server_msg_id, ret_msg_id) {
         console.log(">>>[liveroom-room] zg onRecvRoomMsg, data: ", chat_data);
 
         // 收到其他成员的回到前台通知
@@ -392,7 +408,7 @@ Component({
       };
 
       // 接收大房间IM消息
-      (zg.onRecvBigRoomMessage = function(messageList, roomID) {
+      zg.onRecvBigRoomMessage = function (messageList, roomID) {
         console.log("msgList", messageList);
         for (let i = 0; i < messageList.length; i++) {
           let message = {};
@@ -417,39 +433,63 @@ Component({
             reMsgCount: self.data.reMsgCount
           });
         }
-      }),
-        // 接收可靠消息
-        (zg.onRecvReliableMessage = function(type, seq, data) {
-          // console.log('onRecvReliableMessage', type, seq, data);
-          // if (type === 'prise') {
-          //   self.setData({
-          //     priseCount: +data
-          //   });
-          // }
-        });
+      },
+      // 接收可靠消息
+      zg.onRecvReliableMessage = function (type, seq, data) {
+        if (type === 'merchandise') {
+          const merArr = data.split('&');
+          const merIndex = parseInt(merArr[0]);
+          const merTime = parseInt(merArr[1]);
+          console.log('merchandise', merIndex);
+          const content = {
+            indx: merIndex,
+            merTime,
+            meBot: self.data.meBot
+          }
+          self.data.meBot += 120;
+          self.data.newBot += 120;
+          self.setData({
+            meBot: self.data.meBot,
+            newBot: self.data.newBot
+          })
+          self.triggerEvent('RoomEvent', {
+            tag: 'onRecvMer',
+            // code: 0,
+            content
+          });
+          setTimeout(() => {
+            self.data.meBot -= 120;
+            self.data.newBot -= 120;
+            self.setData({
+              meBot: self.data.meBot,
+              newBot: self.data.newBot
+            });
+          }, merTime * 1000);
+        }
+      }
 
       // 服务端主动推过来的 流的质量更新
-      zg.onPublishQualityUpdate = function(streamID, streamQuality) {
+      zg.onPublishQualityUpdate = function (streamID, streamQuality) {
         console.log(
           ">>>[liveroom-room] zg onPublishQualityUpdate",
           streamQuality
         );
       };
       // 服务端主动推过来的 流的质量更新
-      zg.onPlayQualityUpdate = function(streamID, streamQuality) {
+      zg.onPlayQualityUpdate = function (streamID, streamQuality) {
         console.log(">>>[liveroom-room] zg onPlayQualityUpdate", streamQuality);
       };
 
       // 推流后，服务器主动推过来的，流状态更新
       // type: { start: 0, stop: 1 }，主动停止推流没有回调，其他情况均回调
-      zg.onPublishStateUpdate = function(type, streamid, error) {
+      zg.onPublishStateUpdate = function (type, streamid, error) {
         console.log(
           ">>>[liveroom-room] zg onPublishStateUpdate, streamid: " +
-            streamid +
-            ", type: " +
-            (type === 0 ? "start" : "stop") +
-            ", error: " +
-            error
+          streamid +
+          ", type: " +
+          (type === 0 ? "start" : "stop") +
+          ", error: " +
+          error
         );
 
         self.setData({
@@ -481,12 +521,12 @@ Component({
       };
 
       // 登录成功后，服务器主动推过来的，主播信息
-      zg.onGetAnchorInfo = function(anchorId, anchorName) {
+      zg.onGetAnchorInfo = function (anchorId, anchorName) {
         console.log(
           ">>>[liveroom-room] onGetAnchorInfo, anchorId: " +
-            anchorId +
-            ", anchorName: " +
-            anchorName
+          anchorId +
+          ", anchorName: " +
+          anchorName
         );
 
         self.setData({
@@ -496,7 +536,7 @@ Component({
       };
 
       // 收到连麦请求
-      zg.onRecvJoinLiveRequest = function(
+      zg.onRecvJoinLiveRequest = function (
         requestId,
         fromUserId,
         fromUsername,
@@ -504,11 +544,11 @@ Component({
       ) {
         console.log(
           ">>>[liveroom-room] onRecvJoinLiveRequest, roomId: " +
-            roomId +
-            "requestUserId: " +
-            fromUserId +
-            ", requestUsername: " +
-            fromUsername
+          roomId +
+          "requestUserId: " +
+          fromUserId +
+          ", requestUsername: " +
+          fromUsername
         );
 
         self.data.requestJoinLiveList.push(requestId);
@@ -558,7 +598,7 @@ Component({
       };
 
       // 收到停止连麦请求
-      zg.onRecvEndJoinLiveCommand = function(
+      zg.onRecvEndJoinLiveCommand = function (
         requestId,
         fromUserId,
         fromUsername,
@@ -566,36 +606,35 @@ Component({
       ) {
         console.log(
           ">>>[liveroom-room] onRecvEndJoinLiveCommand, roomId: " +
-            roomId +
-            "requestUserId: " +
-            fromUserId +
-            ", requestUsername: " +
-            fromUsername
+          roomId +
+          "requestUserId: " +
+          fromUserId +
+          ", requestUsername: " +
+          fromUsername
         );
       };
 
-      zg.onUserStateUpdate = function(roomId, userList) {
+      zg.onUserStateUpdate = function (roomId, userList) {
         console.log(
           ">>>[liveroom-room] onUserStateUpdate, roomID: " +
-            roomId +
-            ", userList: "
+          roomId +
+          ", userList: "
         );
         console.log(userList);
 
-        // 主播信息
-        // const audienceList = userList.filter(item => item.role === 2 && item.action === 1);
-        // const latest = audienceList.pop();
+        const audienceList = userList.filter(item => item.role === 2 && item.action === 1);
+        const latest = audienceList.pop();
 
-        // if (latest) {
-        //   const {
-        //     avatar: anchorAvatar,
-        //     nickName
-        //   } = JSON.parse(latest.nickName);
+        if (latest) {
+          const {
+            avatar: anchorAvatar,
+            nickName
+          } = JSON.parse(latest.nickName);
 
-        //   self.setData({
-        //     newestName: nickName
-        //   });
-        // }
+          self.setData({
+            newestName: nickName
+          });
+        }
 
         //for (let i = 0; i < userList.length; i++) {
         if (
@@ -630,12 +669,12 @@ Component({
       };
 
       //
-      zg.onUpdateOnlineCount = function(roomId, userCount) {
+      zg.onUpdateOnlineCount = function (roomId, userCount) {
         console.log(
           ">>>[liveroom-room] onUpdateOnlineCount, roomId: " +
-            roomId +
-            ", userCount: " +
-            userCount
+          roomId +
+          ", userCount: " +
+          userCount
         );
         self.setData({
           userCount
@@ -653,7 +692,7 @@ Component({
         self.data.roomID,
         self.data.loginType === "anchor" ? 1 : 2,
         token,
-        function(streamList) {
+        function (streamList) {
           console.log(">>>[liveroom-room] login success, streamList is: ");
           console.log(streamList);
 
@@ -686,7 +725,7 @@ Component({
             }
             console.log(
               ">>>[liveroom-room] anchor startPublishingStream, publishStreamID: " +
-                self.data.publishStreamID
+              self.data.publishStreamID
             );
             zg.setPreferPublishSourceType(self.data.preferPublishSourceType);
             zg.startPublishingStream(self.data.publishStreamID, "");
@@ -707,7 +746,7 @@ Component({
             //       console.log('prise success', res);
             //     },
             //     function (e) {
-            //       console.error('prise fail', e);
+            //       console.log('prise fail', e);
             //     }
             //   )
             // }, 5000);
@@ -733,7 +772,7 @@ Component({
             }
           }
         },
-        function(err) {
+        function (err) {
           console.log(">>>[liveroom-room] login failed, error is: ", err);
           if (err) {
             let title = "登录房间失败，请稍后重试。\n失败信息：" + err.msg;
@@ -773,8 +812,35 @@ Component({
         }
       });
     },
+    //输入聚焦
+    foucus: function (e) {
+      var that = this;
+      console.log(e);
+      let inputBot = e.detail.height;
+      if (iphone6s) {
+        if (210 < inputBot && inputBot < 220) {
+          inputBot = e.detail.height + 42;
+        }
+      }
+      that.setData({
+        inputBottom: inputBot
+      })
+    },
+
+    //失去聚焦
+    blur: function (e) {
+
+      var that = this;
+
+      that.setData({
+
+        inputBottom: 0
+
+      })
+
+    },
     setPushUrl(url) {
-      console.error(">>>[liveroom-room] setPushUrl: ", url);
+      console.log(">>>[liveroom-room] setPushUrl: ", url);
       let self = this;
 
       if (!url) {
@@ -782,21 +848,21 @@ Component({
         return;
       }
 
-      // console.error('uurl', this.data.pushUrl);
+      // console.log('uurl', this.data.pushUrl);
       this.setData(
         {
           pushUrl: url
           // pusherVideoContext: wx.createLivePusherContext(),
         },
         () => {
-          console.error("zgPusher", zgPusher);
+          console.log("zgPusher", zgPusher);
           zgPusher.start();
         }
       );
     },
 
     setPlayUrl(streamid, url) {
-      console.error(">>>[liveroom-room] setPlayUrl: ", url);
+      console.log(">>>[liveroom-room] setPlayUrl: ", url);
       let self = this;
       if (!url) {
         console.log(">>>[liveroom-room] setPlayUrl, url is null");
@@ -894,9 +960,9 @@ Component({
         let anchorID = streamList[i].anchor_id_name; // 推这条流的用户id
         console.log(
           ">>>[liveroom-room] startPlayingStream, playStreamID: " +
-            streamID +
-            ", pushed by : " +
-            anchorID
+          streamID +
+          ", pushed by : " +
+          anchorID
         );
         zg.startPlayingStream(streamID);
       }
@@ -949,7 +1015,7 @@ Component({
         {
           playStreamList: playStreamList
         },
-        function() {
+        function () {
           // 检查流删除后，是否低于房间流上限
           if (
             self.data.playStreamList.length ===
@@ -959,7 +1025,7 @@ Component({
               {
                 reachStreamLimit: false
               },
-              function() {
+              function () {
                 if (self.data.loginType === "audience") {
                   wx.showToast({
                     title: "一位观众结束连麦，允许新的连麦",
@@ -981,28 +1047,198 @@ Component({
         }
       );
     },
-    
+    showMerchandise() {
+      console.log('showMerchandise');
+      let role = "anchor";
+      const content = {
+        role,
+      }
+      this.triggerEvent('RoomEvent', {
+        tag: 'onMerchandise',
+        // code: 0,
+        content
+      });
+    },
+    clickMessage() {
+      console.log('clickMessage');
+      this.clickFull();
+    },
+    scrollMessage() {
+      console.log('scrollMessage');
+    },
+    clickFull() {
+      console.log('clickFull')
+      if (this.data.inputShow) {
+        this.setData({
+          inputShow: false
+        });
+      };
+      this.triggerEvent('RoomEvent', {
+        tag: 'onModalClick',
+        content: {}
+      })
+    },
+    showInput() {
+      console.log('showInput');
+      this.setData({
+        inputShow: true
+      });
+    },
+    switchCamera() {
+      this.data.pushConfig.frontCamera = !this.data.pushConfig.frontCamera;
+      this.setData({
+        pushConfig: this.data.pushConfig,
+      });
+      zgPusher && zgPusher.switchCamera();
+    },
+    enableMute() {
+      this.data.pushConfig.isMute = !this.data.pushConfig.isMute;
+      this.setData({
+        pushConfig: this.data.pushConfig,
+      });
+    },
+    onComment() {
+      console.log('>>>[liveroom-room] begin to comment', this.data.inputMessage);
+      if (!this.data.inputMessage.trim()) {
+        this.showInput();
+        wx.showToast({
+          title: "您还没有输入内容",
+          icon: 'none',
+          duration: 2000
+        });
+        return;
+      }
+      let self = this;
+
+      let message = {
+        id: this.data.userID + Date.parse(new Date()),
+        // name: this.data.userID,
+        name: '我',
+        color: "#FF4EB2",
+        // time: new Date().format("hh:mm:ss"),
+        content: this.data.inputMessage,
+      };
+
+      console.log('>>>[liveroom-room] currentMessage', this.data.inputMessage);
+
+      // const msgObj = {
+      //   type: 'IM',
+      //   detail: this.data.inputMessage
+      // }
+
+      self.data.messageList.push(message);
+
+      self.setData({
+        messageList: self.data.messageList,
+        inputMessage: "",
+        scrollToView: message.id,
+        clearHide: true,
+        inputShow: false,
+        keyboardHold: true
+      });
+
+      zg.sendBigRoomMessage(1, 1, message.content,
+        function (seq, msgId, msg_category, msg_type, msg_content) {
+          console.log('>>>[liveroom-room] onComment success');
+
+
+        },
+        function (err, seq, msg_category, msg_type, msg_content) {
+          console.log('>>>[liveroom-room] onComment, error: ');
+          console.log(err);
+          wx.showModal({
+            title: '提示',
+            content: '发送消息失败',
+            showCancel: false,
+            success(res) {
+              // 用户点击确定，或点击安卓蒙层关闭
+              if (res.confirm || !res.cancel) {
+                // 强制用户退出
+                // wx.navigateBack();
+                // zg.logout();
+              }
+            }
+          });
+        });
+    },
+    onNetworkStatus() {
+      console.log('onNetworkStatus');
+      wx.onNetworkStatusChange(res => {
+        console.log('net', res);
+        // if (res.isConnected && connectType === 0 && zg) {
+        //   console.log('connectType', connectType);
+        //   zg.setUserStateUpdate(true);
+        //   this.loginRoom(this.data.token);
+        // }
+        if (res.isConnected) {
+          networkOk = true;
+        } else {
+          networkOk = false;
+        }
+      })
+    },
+    bindMessageInput: function (e) {
+      this.data.inputMessage = e.detail.value;
+      if (this.data.inputMessage !== '') {
+        this.setData({
+          clearHide: false,
+          keyboardHold: false
+        })
+      } else {
+        this.setData({
+          clearHide: true,
+          keyboardHold: true
+        })
+      }
+    },
+    clearInput: function (e) {
+      this.setData({
+        inputMessage: '',
+        clearHide: true,
+        keyboardHold: true
+      })
+    },
+    pushMer(indx) {
+      console.log('indx', indx);
+      let self = this;
+      zg.sendReliableMessage('merchandise',
+        indx + '&' + this.data.pushMerTime,
+        function (res) {
+          console.log('pushMer success', res);
+          const content = {
+
+          }
+          self.triggerEvent('RoomEvent', {
+            tag: 'onPushMerSuc',
+            // code: 0,
+            content
+          })
+        },
+        function (err) {
+          console.error('pushMer error', err)
+        })
+    },
     onPushStateChange(e) {
-      console.error("onPushStateChange", e);
-      console.error(
+      console.log("onPushStateChange", e);
+      console.log(
         ">>>[liveroom-room] onPushStateChange, code: " +
-          e.detail.code +
-          ", message:" +
-          e.detail.message
+        e.detail.code +
+        ", message:" +
+        e.detail.message
       );
-      // console.error('onPushStateChange', e.detail.detail.code);
+      // console.log('onPushStateChange', e.detail.detail.code);
       zg.updatePlayerState(this.data.publishStreamID, e);
     },
     onPushNetStateChange(e) {
       zg.updatePlayerNetStatus(this.data.publishStreamID, e);
     },
     onPlayStateChange(e) {
-      console.error("onPlayStateChange", e);
-      console.error(
+      console.log("onPlayStateChange", e);
+      console.log(
         ">>>[liveroom-room] onPlayStateChange, code: " +
-          e.detail.code +
-          ", message:" +
-          e.detail.message
+        e.detail.code +
+        ", message:" +
+        e.detail.message
       );
       zg.updatePlayerState(e.detail.streamID, e);
     },
