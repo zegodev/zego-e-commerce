@@ -1,0 +1,2 @@
+<!--miniprogram/pages/live/index.wxml-->
+<live zegoAppID="{{zegoAppID}}" loginType="{{loginType}}" logServerURL="{{logServerURL}}"  roomID="{{roomID}}"></live>

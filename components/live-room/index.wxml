@@ -1,0 +1,5 @@
+<!-- components/live-room/index.wxml -->
+<view class="live-room-container">
+    <zego-pusher wx:if="{{loginType==='anchor'}}" id="zg-pusher" url="{{pushUrl}}" autopush="{{false}}" class="push-content" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange"></zego-pusher>
+    <zego-player wx:if="{{loginType==='audience'}}" id="zg-player" sid="{{sid}}" url="{{playUrl}}" autoplay="{{false}}" objectFit="fillCrop" class="play-content" bindstatechange="onPlayStateChange" bindnetstatus="onPlayNetStateChange"></zego-player>
+</view>

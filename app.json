@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/main/index",
+    "pages/roomList/index",
+    "pages/index/index",
+    "pages/room/index"
+  ],
+  "plugins": {
+    "zego-e-commerce": {
+      "version": "dev-0370f49acc16c1a7f4e8874cf6b61def",
+      "provider": "wx2b8909dae7727f25"
+    }
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
