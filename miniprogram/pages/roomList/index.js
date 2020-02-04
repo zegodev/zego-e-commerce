@@ -138,7 +138,7 @@ Page({
             if (res.statusCode === 200) {
                 console.log(res.data);
                 const roomList = res.data.data.room_list.
-                // filter(item => item.room_id.startsWith('e-')).
+                filter(item => item.room_id.startsWith('e-')).
                 map(item => {
                   item.room_show_name = item.room_id.slice(2);
                   console.log('show_name', item.room_show_name);
