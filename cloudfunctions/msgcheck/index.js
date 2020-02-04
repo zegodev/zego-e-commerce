@@ -1,7 +1,7 @@
 const cloud = require('wx-server-sdk')
 
 cloud.init({
-  env: 'cloud-18aa6f'
+  env: 'e-commerce-cloud-agccw'
 })
 
 // 云函数入口函数
