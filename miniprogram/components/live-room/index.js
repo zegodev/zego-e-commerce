@@ -6,6 +6,7 @@ let zg;
 let connectType = -1;
 let zgPusher;
 let zgPlayer;
+let networkOk = true;
 let priseTotal = 0;
 let iphoneXX = false;
 let iphone6s = false;
@@ -73,7 +74,7 @@ Component({
     anchorName: "", // 主播名
     anchorStreamID: "", // 主播推流的流 ID
     publishStreamID: "", // 推流 ID
-    pusherVideoContext: null, // live-pusher Context，内部只有一个对象
+    // pusherVideoContext: null, // live-pusher Context，内部只有一个对象
     playStreamList: [], // 拉流流信息列表，列表中每个对象结构为 {anchorID:'xxx', streamID:'xxx', playContext:{}, playUrl:'xxx', playingState:'xxx'}
     beginToPublish: false, // 准备连麦标志位
     reachStreamLimit: false, // 房间内达到流上限标志位
@@ -216,7 +217,29 @@ Component({
       keepScreenOn: true
     });
   },
-
+  pageLifetimes: {
+    show: function () {
+      // 页面被展示
+      console.log('page show', zg);
+      if (zg) {
+        zg.setUserStateUpdate(true);
+        this.loginRoom(this.data.token);
+        // getLoginToken(this.data.userID, this.data.zegoAppID).then(token => {
+        //   console.log('token', token);
+        //   this.setData({ token });
+        //   zg.setUserStateUpdate(true);
+        //   this.loginRoom(token);
+        // });
+      }
+    },
+    hide: function () {
+      // 页面被隐藏
+      console.log('page hide');
+      if (zg) {
+        this.logoutRoom();
+      }
+    },
+  },
   /**
    * 组件的方法列表
    */
@@ -626,10 +649,20 @@ Component({
         const latest = audienceList.pop();
 
         if (latest) {
+          
+          let userInfo;
+          try {
+            userInfo = JSON.parse(latest.nickName);
+          } catch(e) {
+            userInfo = { 
+              avatar: '../images/avatar-logo.png',
+              nickName: latest.nickName
+            }
+          }
           const {
             avatar: anchorAvatar,
             nickName
-          } = JSON.parse(latest.nickName);
+          } = userInfo;
 
           self.setData({
             newestName: nickName
@@ -852,7 +885,6 @@ Component({
       this.setData(
         {
           pushUrl: url
-          // pusherVideoContext: wx.createLivePusherContext(),
         },
         () => {
           console.log("zgPusher", zgPusher);
@@ -1237,6 +1269,43 @@ Component({
           console.error('pushMer error', err)
         })
     },
+    logoutRoom() {
+      // 停止推流
+      if (this.data.loginType === 'anchor') {
+        if (this.data.isPublishing) {
+          console.log('>>>[liveroom-room] stop publish stream, streamid: ' + this.data.publishStreamID);
+          zg.stopPublishingStream(this.data.publishStreamID);
+          zgPusher.stop();
+  
+          this.setData({
+            // publishStreamID: "",
+            isPublishing: false,
+            pushUrl: "",
+            // pusherVideoContext: null
+          });
+  
+        }
+      } else if (this.data.loginType === 'audience') {
+        // let streamList = this.data.playStreamList;
+        // for (let i = 0; i < streamList.length; i++) {
+        //   let streamID = streamList[i]['streamID'];
+        //   console.log('>>>[liveroom-room] onUnload stop play stream, streamid: ' + streamID);
+        //   zg.stopPlayingStream(streamID);
+
+        //   streamList[i]['playContext'] && streamList[i]['playContext'].stop();
+        // }
+      
+        zg.stopPlayingStream(this.data.sid);
+        zgPlayer.stop();
+        this.setData({
+          // playStreamList: [],
+          playUrl: ""
+        });
+      }
+
+      // 退出登录
+      zg.logout();
+    },
     onPushStateChange(e) {
       console.log("onPushStateChange", e);
       console.log(
@@ -1263,6 +1332,6 @@ Component({
     },
     onPlayNetStateChange(e) {
       zg.updatePlayerNetStatus(e.detail.streamID, e);
-    }
+    },
   }
 });

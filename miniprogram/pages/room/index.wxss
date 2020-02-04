@@ -129,8 +129,8 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 30rpx;
-    line-height: 26rpx;
+    font-size: 28rpx;
+    line-height: 32rpx;
   }
   .push-mer-price {
     color: #F2034C;
