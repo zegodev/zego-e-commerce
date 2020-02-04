@@ -1109,57 +1109,76 @@ Component({
         return;
       }
       let self = this;
-
-      let message = {
-        id: this.data.userID + Date.parse(new Date()),
-        // name: this.data.userID,
-        name: '我',
-        color: "#FF4EB2",
-        // time: new Date().format("hh:mm:ss"),
-        content: this.data.inputMessage,
-      };
-
-      console.log('>>>[liveroom-room] currentMessage', this.data.inputMessage);
-
-      // const msgObj = {
-      //   type: 'IM',
-      //   detail: this.data.inputMessage
-      // }
-
-      self.data.messageList.push(message);
-
-      self.setData({
-        messageList: self.data.messageList,
-        inputMessage: "",
-        scrollToView: message.id,
-        clearHide: true,
-        inputShow: false,
-        keyboardHold: true
-      });
-
-      zg.sendBigRoomMessage(1, 1, message.content,
-        function (seq, msgId, msg_category, msg_type, msg_content) {
-          console.log('>>>[liveroom-room] onComment success');
-
-
-        },
-        function (err, seq, msg_category, msg_type, msg_content) {
-          console.log('>>>[liveroom-room] onComment, error: ');
-          console.log(err);
-          wx.showModal({
-            title: '提示',
-            content: '发送消息失败',
-            showCancel: false,
-            success(res) {
-              // 用户点击确定，或点击安卓蒙层关闭
-              if (res.confirm || !res.cancel) {
-                // 强制用户退出
-                // wx.navigateBack();
-                // zg.logout();
-              }
-            }
+      wx.cloud.init();
+      wx.cloud.callFunction({
+        name:'msgcheck',
+        data:{
+          content: self.data.inputMessage
+        }
+      }).then(ckres=>{
+      
+      //审核通过之后的操作 if == 0
+        if (ckres.result.errCode == 0){
+          let message = {
+            id: this.data.userID + Date.parse(new Date()),
+            // name: this.data.userID,
+            name: '我',
+            color: "#FF4EB2",
+            // time: new Date().format("hh:mm:ss"),
+            content: this.data.inputMessage,
+          };
+    
+          console.log('>>>[liveroom-room] currentMessage', this.data.inputMessage);
+    
+          // const msgObj = {
+          //   type: 'IM',
+          //   detail: this.data.inputMessage
+          // }
+    
+          self.data.messageList.push(message);
+    
+          self.setData({
+            messageList: self.data.messageList,
+            inputMessage: "",
+            scrollToView: message.id,
+            clearHide: true,
+            inputShow: false,
+            keyboardHold: true
           });
-        });
+    
+          zg.sendBigRoomMessage(1, 1, message.content,
+            function (seq, msgId, msg_category, msg_type, msg_content) {
+              console.log('>>>[liveroom-room] onComment success');
+    
+    
+            },
+            function (err, seq, msg_category, msg_type, msg_content) {
+              console.log('>>>[liveroom-room] onComment, error: ');
+              console.log(err);
+              wx.showModal({
+                title: '提示',
+                content: '发送消息失败',
+                showCancel: false,
+                success(res) {
+                  // 用户点击确定，或点击安卓蒙层关闭
+                  if (res.confirm || !res.cancel) {
+                    // 强制用户退出
+                    // wx.navigateBack();
+                    // zg.logout();
+                  }
+                }
+              });
+            });
+        }else{
+          wx.hideLoading();
+          wx.showModal({
+            title: '提醒',
+            content: '请注意言论',
+            showCancel:false
+          })
+        }
+      })
+      
     },
     onNetworkStatus() {
       console.log('onNetworkStatus');
