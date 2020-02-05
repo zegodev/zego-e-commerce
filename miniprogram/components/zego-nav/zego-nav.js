@@ -35,6 +35,7 @@ Component({
      */
     methods: {
         back() {
+            console.log('back');
             if(getCurrentPages().length>1){
                 wx.navigateBack();
             }else{
