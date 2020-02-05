@@ -49,7 +49,7 @@
         <view wx:else class="mmprise-con">
             <view class='message-input' style='bottom:{{inputBottom}}px'>
                 <view class="input-conteiner">
-                    <input class="input-content" value="{{inputMessage}}" placeholder="我要说点什么" placeholder-style='color: #C0C0C0; font-size: 28rpx;' bindinput="bindMessageInput" focus="{{inputShow}}" bindfocus="foucus" bindblur="blur" cursor-spacing="15" adjust-position='{{false}}' confirm-hold='{{keyboardHold}}' hold-keyboard='{{keyboardHold}}' confirm-type='send' bindconfirm="onComment" />
+                    <input class="input-content" value="{{inputMessage}}" placeholder="我要说点什么" placeholder-style='color: #C0C0C0; font-size: 28rpx;' bindinput="bindMessageInput" focus="auto" bindfocus="foucus" bindblur="blur" bindkeyboardheightchange="boardChange" cursor-spacing="15" adjust-position='{{false}}' confirm-hold='{{keyboardHold}}' hold-keyboard='{{keyboardHold}}' confirm-type='send' bindconfirm="onComment" />
                     <image hidden="{{clearHide}}" class="clear-input" src="../images/clear-input.png" catch:tap="clearInput"></image>
                 </view>
                 <view class="send-btn" bindtap="onComment">发送</view>
