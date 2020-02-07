@@ -1,5 +1,6 @@
 // miniprogram/pages/live/index.js
 var plugin = requirePlugin("zego-e-commerce");
+let { sharePage } = require("../../utils/util.js");
 
 let liveRoom;
 
