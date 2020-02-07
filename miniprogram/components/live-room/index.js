@@ -113,6 +113,7 @@ Component({
     userInfo: {},
     hasUserInfo: false,
 
+    waitingImage: "https://storage.zego.im/downloads/pause_publish.png",
     avatarUrl: "",
     nickName: "",
     playUrl: "",
@@ -1146,5 +1147,8 @@ Component({
     onPlayNetStateChange(e) {
       zg.updatePlayerNetStatus(e.detail.streamID, e);
     },
+    onPushError: function (ev) {
+      console.error(ev);
+    }
   }
 });

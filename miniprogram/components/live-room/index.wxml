@@ -2,7 +2,7 @@
 <wxs src="../lib/stringUtil.wxs" module="stringUtil" />
 
 <view class="live-room-container">
-    <zego-pusher wx:if="{{loginType==='anchor'}}" id="zg-pusher" url="{{pushUrl}}" autopush="{{false}}" class="push-content" muted="{{pushConfig.isMute}}" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange"></zego-pusher>
+    <zego-pusher wx:if="{{loginType==='anchor'}}" id="zg-pusher" url="{{pushUrl}}" autopush="{{false}}" class="push-content" muted="{{pushConfig.isMute}}" waitingImage="{{waitingImage}}" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange"></zego-pusher>
     <zego-player wx:if="{{loginType==='audience'}}" id="zg-player" sid="{{sid}}" url="{{playUrl}}" autoplay="{{false}}" objectFit="fillCrop" class="play-content" bindstatechange="onPlayStateChange" bindnetstatus="onPlayNetStateChange"></zego-player>
     <view class="user-info" wx:if="{{userTop > 0}}" style="top:{{userTop}}px">
             <image class="avatar" src="{{avatarUrl}}" bindload="" binderror=""></image>
