@@ -70,6 +70,7 @@
     justify-content: space-between;
     font-size: 28rpx;
     padding-left: 22rpx;
+    margin-top: -20rpx;
   }
   .merchandise-action {
     display: flex;
@@ -91,7 +92,7 @@
   }
   .merchandise-text {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
