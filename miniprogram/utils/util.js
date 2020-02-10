@@ -23,7 +23,7 @@ function sharePage(param) {
   }
   console.log(getCurrentPages());
   return {
-      title: '即构音视频云',
+      title: '即构ECommerceLive',
       path: getCurrentPages().pop().route + '?' + paramArr.join('&'),
       imageUrl: '/resource/share.png'
   }
