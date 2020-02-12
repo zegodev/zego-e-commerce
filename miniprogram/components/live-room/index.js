@@ -1,11 +1,11 @@
 // components/live-room/index.js
 let { ZegoClient } = require("../lib/jZego-wx-1.4.0.js");
-let { getLoginToken } = require("../lib/server.js");
 
 let zg;
 let zgPusher;
 let zgPlayer;
 let networkOk = true;
+let isLogout = false;
 let priseTotal = 0;
 let iphoneXX = false;
 let iphone6s = false;
@@ -43,6 +43,22 @@ Component({
         // this.setData({ items: newVal });
       }
     },
+    userID: {
+      type: String,
+      value: ""
+    },
+    token: {
+      type: String,
+      value: "",
+      observer: function (newVal, oldVal, changedPath) {
+        if (newVal !== '') {
+          this.loginRoom(newVal);
+          this.setData({
+            token: newVal
+          })
+        }
+      }
+    },
     // avatar: {
     //   type: String,
     //   value: ""
@@ -66,7 +82,7 @@ Component({
     // loginType: '', // 登录类型。anchor：主播；audience：观众
     // roomID: "",             // 房间 ID
     roomName: "", // 房间名
-    userID: "", // 当前初始化的用户 ID
+    // userID: "", // 当前初始化的用户 ID
     userName: "", // 当前初始化的用户名
     anchorID: "", // 主播 ID
     // anchorName: "", // 主播名
@@ -80,7 +96,8 @@ Component({
     pushConfig: {
       // 推流配置项
       isMute: false, // 推流是否静音
-      frontCamera: true, // 前后置摄像头，false 表示后置
+      frontCamera: true, // 前后置摄像头，false 表示后置,
+      beauty: 6
     },
     playConfig: {
     },
@@ -163,7 +180,7 @@ Component({
     this.setData({
       roomName: this.data.roomID,
       preferPlaySourceType: 0,
-      userID: "xcxU" + timestamp,
+      // userID: "xcxU" + timestamp,
       userName: JSON.stringify(nickAvatar),
       publishStreamID: "xcxS" + timestamp,
     });
@@ -193,14 +210,15 @@ Component({
     );
 
     // 进入房间，自动登录
-    getLoginToken(this.data.userID, this.data.zegoAppID).then(token => {
-      console.log("tokenn", token);
-      this.setData({
-        token
-      });
-      zg.setUserStateUpdate(true);
-      this.loginRoom(token);
-    });
+    // getLoginToken(this.data.userID, this.data.zegoAppID).then(token => {
+    //   console.log("tokenn", token);
+    //   this.setData({
+    //     token
+    //   });
+    zg.setUserStateUpdate(true);
+    console.log('token', this.data.token)
+    // this.loginRoom(this.data.token);
+    // });
 
     this.onNetworkStatus();
     // 保持屏幕常亮
@@ -215,12 +233,6 @@ Component({
       if (zg) {
         zg.setUserStateUpdate(true);
         this.loginRoom(this.data.token);
-        // getLoginToken(this.data.userID, this.data.zegoAppID).then(token => {
-        //   console.log('token', token);
-        //   this.setData({ token });
-        //   zg.setUserStateUpdate(true);
-        //   this.loginRoom(token);
-        // });
       }
     },
     hide: function () {
@@ -801,9 +813,11 @@ Component({
         ">>>[liveroom-room] startPlayingStream, preferPlaySourceType: ",
         self.data.preferPlaySourceType
       );
-      if (!self.data.sid) {
+      if (self.data.sid == '') {
         const streamId = streamList[0].stream_id;
         zg.startPlayingStream(streamId);
+      } else {
+        isLogout = streamList.find(item => item.stream_id === self.data.sid);
       }
       // // 获取每个 streamID 对应的拉流 url
       // for (let i = 0; i < streamList.length; i++) {
@@ -834,9 +848,21 @@ Component({
           zg.stopPlayingStream(self.data.sid);
           zgPlayer && zgPlayer.stop();
           self.setData({
-            sid: "",
+            // sid: "",
             playUrl: "",
           });
+          isLogout = true;
+          setTimeout(() => {
+            if (isLogout) {
+              zg.logout();
+              const content = {};
+              self.triggerEvent("RoomEvent", {
+                tag: "onBack",
+                // code: 0,
+                content
+              });
+            }
+          }, 10000);
           break;
         }
       }

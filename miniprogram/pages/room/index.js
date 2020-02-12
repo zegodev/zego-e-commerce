@@ -1,6 +1,7 @@
 // miniprogram/pages/live/index.js
 var plugin = requirePlugin("zego-e-commerce");
 let { sharePage } = require("../../utils/util.js");
+let { getLoginToken } = require("../../utils/server.js");
 
 let liveRoom;
 
@@ -15,7 +16,7 @@ Page({
     logServerURL: "https://wsslogger-demo.zego.im/httplog",
     loginType: "",
     roomShowName: '',
-
+    token: '',
     userInfo: {},
     hasUserInfo: false,
 
@@ -29,7 +30,12 @@ Page({
         img: '../../resource/m0.png',
         price: '345',
         id: 0,
-        link: "../web/index"
+        link: {
+          path: "../web/index",
+          extraDatas: {
+            url: 'https://item.m.jd.com/product/1500761.html'
+          }
+        }
       },
       {
         name: 'OACH蔻驰Charlie 27 Carryal单肩斜挎手提包女包包2952过长样式挎手提包女包包2952过',
@@ -53,12 +59,21 @@ Page({
   onLoad: function (options) {
     const { roomID, roomName, loginType } = options;
     const roomShowName = roomID.slice(2);
+    let timestamp = new Date().getTime();
+    const userID = "xcxU" + timestamp;
     this.setData({
       roomID,
       roomName,
       loginType,
       roomShowName,
+      userID
     });
+    getLoginToken(userID, this.data.zegoAppID).then(token => {
+      console.log('token', token)
+      this.setData({
+        token
+      });
+    })
     console.log('plugin', plugin);
     plugin.sayHello();
 
@@ -233,10 +248,13 @@ Page({
     })
   },
   clickMech(e) {
-    var toUrl = this.data.merchandises[e.currentTarget.id].link;
-    console.log(toUrl);
-    wx.navigateTo({
+    var link = this.data.merchandises[e.currentTarget.id].link;
+    if (link) {
+      const toUrl = link.path + '?url=' + link.extraDatas.url
+      wx.navigateTo({
         url: toUrl,
-    });
+      });
+    }
+    
   },
 })

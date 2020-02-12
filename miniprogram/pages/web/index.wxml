@@ -1,2 +1,2 @@
 <!--pages/web/index.wxml-->
-<web-view src="https://item.m.jd.com/product/1500761.html"></web-view>
+<web-view src="{{url}}"></web-view>
