@@ -53,9 +53,9 @@ Component({
       observer: function (newVal, oldVal, changedPath) {
         if (newVal !== '') {
           this.loginRoom(newVal);
-          this.setData({
-            token: newVal
-          })
+          // this.setData({
+          //   token: newVal
+          // })
         }
       }
     },
@@ -230,17 +230,17 @@ Component({
     show: function () {
       // 页面被展示
       console.log('page show', zg);
-      if (zg) {
-        zg.setUserStateUpdate(true);
-        this.loginRoom(this.data.token);
-      }
+      // if (zg) {
+        // zg.setUserStateUpdate(true);
+        // this.loginRoom(this.data.token);
+      // }
     },
     hide: function () {
       // 页面被隐藏
       console.log('page hide');
-      if (zg) {
-        this.logoutRoom();
-      }
+      // if (zg) {
+      //   this.logoutRoom();
+      // }
     },
   },
   /**
@@ -576,7 +576,7 @@ Component({
       let self = this;
       console.log(
         ">>>[liveroom-room] login room, roomID: " + self.data.roomID,
-        ", userID: " + self.data.userID + ", userName: " + self.data.userName
+        ", userID: " + self.data.userID + ", userName: " + self.data.userName + ", token: " + token
       );
 
       zg.login(
