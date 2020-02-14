@@ -112,6 +112,7 @@
     background-color: #fff;
     font-size: 28rpx;
     border-radius: 8rpx;
+    z-index: 11;
   }
   .push-mer-img {
     width: 120rpx;

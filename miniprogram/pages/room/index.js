@@ -57,6 +57,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    console.log('>>>onLoad')
     const { roomID, roomName, loginType } = options;
     const roomShowName = roomID.slice(2);
     let timestamp = new Date().getTime();
@@ -257,4 +258,14 @@ Page({
     }
     
   },
+  clickPush() {
+    console.log(this.data.pushInx)
+    if (this.data.pushInx == 0) {
+      var link = this.data.merchandises[this.data.pushInx].link;
+      const toUrl = link.path + '?url=' + link.extraDatas.url
+      wx.navigateTo({
+        url: toUrl,
+      });
+    }
+  }
 })
