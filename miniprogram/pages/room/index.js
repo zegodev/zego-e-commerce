@@ -33,7 +33,7 @@ Page({
         link: {
           path: "../web/index",
           extraDatas: {
-            url: 'https://item.m.jd.com/product/1500761.html'
+            url: 'https://shop-ecommerce.yunyikao.com/product.html'
           }
         }
       },
