@@ -69,12 +69,7 @@ Page({
       roomShowName,
       userID
     });
-    getLoginToken(userID, this.data.zegoAppID).then(token => {
-      console.log('token', token)
-      this.setData({
-        token
-      });
-    })
+    
     console.log('plugin', plugin);
     plugin.sayHello();
 
@@ -95,6 +90,12 @@ Page({
    */
   onReady: function () {
     liveRoom = this.selectComponent('#live-room');
+    getLoginToken(this.data.userID, this.data.zegoAppID).then(token => {
+      console.log('token', token)
+      this.setData({
+        token
+      });
+    })
   },
 
   /**
