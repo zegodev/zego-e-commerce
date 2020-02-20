@@ -37,7 +37,7 @@
             </view>
         </view>
     </view>
-    <view class="push-mer" wx:if="{{pushInx >= 0}}" style="bottom:{{meBot}}rpx;" bindtap="clickPush">
+    <view class="push-mer" wx:if="{{pushInx >= 0}}" style="bottom:{{merBot}}rpx;" bindtap="clickPush">
         <image class="push-mer-img" src="{{merchandises[pushInx].img}}"></image>
         <view class="push-mer-detail">
             <text class="push-mer-text">{{merchandises[pushInx].name}}</text>

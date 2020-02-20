@@ -4,6 +4,7 @@ let { sharePage } = require("../../utils/util.js");
 let { getLoginToken } = require("../../utils/server.js");
 
 let liveRoom;
+let merT = null;
 
 Page({
 
@@ -168,16 +169,19 @@ Page({
       }
       case 'onRecvMer': {
         console.log('onRecvMer', content);
-        const {indx, merTime, meBot} = content;
+        const {indx, merTime, merBot} = content;
+        merT && clearTimeout(merT);
         this.setData({
           pushInx: indx,
-          meBot: meBot
+          merBot: merBot
         });
-        setTimeout(() => {
+        merT = setTimeout(() => {
           this.setData({
             pushInx: -1,
-            meBot: meBot
+            merBot: merBot
           });
+          clearTimeout(merT);
+          merT = null;
         }, merTime * 1000);
         break;
       }

@@ -6,6 +6,7 @@ let zgPusher;
 let zgPlayer;
 let networkOk = true;
 let isLogout = false;
+let merT = null;
 let priseTotal = 0;
 let iphoneXX = false;
 let iphone6s = false;
@@ -415,7 +416,8 @@ Component({
       },
       // 接收可靠消息
       zg.onRecvReliableMessage = function (type, seq, data) {
-        if (type === 'merchandise') {
+        console.loginType('onRecvReliableMessage', type);
+        if (self.data.loginType === 'audience' && type === 'merchandise') {
           const merArr = data.split('&');
           const merIndex = parseInt(merArr[0]);
           const merTime = parseInt(merArr[1]);
@@ -423,26 +425,35 @@ Component({
           const content = {
             indx: merIndex,
             merTime,
-            meBot: self.data.meBot
+            merBot: self.data.mmBot + 140
           }
-          self.data.meBot += 120;
-          self.data.newBot += 120;
-          self.setData({
-            meBot: self.data.meBot,
-            newBot: self.data.newBot
-          })
           self.triggerEvent('RoomEvent', {
             tag: 'onRecvMer',
             // code: 0,
             content
           });
-          setTimeout(() => {
+          console.log(!!merT);
+          if (merT) {
+            clearTimeout(merT);
+            merT = null;
+          } else {
+            self.data.meBot += 120;
+            self.data.newBot += 120;
+            self.setData({
+              meBot: self.data.meBot,
+              newBot: self.data.newBot
+            });
+          }
+          
+          merT = setTimeout(() => {
             self.data.meBot -= 120;
             self.data.newBot -= 120;
             self.setData({
               meBot: self.data.meBot,
               newBot: self.data.newBot
             });
+            clearTimeout(merT);
+            merT = null;
           }, merTime * 1000);
         }
       }
