@@ -416,7 +416,7 @@ Component({
       },
       // 接收可靠消息
       zg.onRecvReliableMessage = function (type, seq, data) {
-        console.loginType('onRecvReliableMessage', type);
+        console.log('onRecvReliableMessage', type);
         if (self.data.loginType === 'audience' && type === 'merchandise') {
           const merArr = data.split('&');
           const merIndex = parseInt(merArr[0]);

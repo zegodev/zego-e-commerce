@@ -38,7 +38,7 @@
   font-size: 15px;
   color: #fff;
   margin: 20px 0;
-  width: 300px !important;
+  width: 280px !important;
   padding: 0;
   /* padding:25rpx 40rpx; */
   /* margin-top: 2vh; */
