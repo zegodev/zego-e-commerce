@@ -1,15 +1,37 @@
 <!-- components/live-room/index.wxml -->
 <wxs src="../lib/stringUtil.wxs" module="stringUtil" />
-
 <view class="live-room-container">
-    <zego-pusher wx:if="{{loginType==='anchor'}}" id="zg-pusher" url="{{pushUrl}}" beauty="{{pushConfig.beauty}}" class="push-content" muted="{{pushConfig.isMute}}" waitingImage="{{waitingImage}}" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange"></zego-pusher>
-    <zego-player wx:if="{{loginType==='audience'}}" id="zg-player" sid="{{sid}}" url="{{playUrl}}" autoplay="{{false}}" objectFit="fillCrop" class="play-content" bindstatechange="onPlayStateChange" bindnetstatus="onPlayNetStateChange"></zego-player>
-    <view class="user-info" wx:if="{{userTop > 0}}" style="top:{{userTop}}px">
-            <image class="avatar" src="{{avatarUrl}}" bindload="" binderror=""></image>
-            <view class="user-text">
-                <view class="">{{stringUtil.substr(nickName,8)}}</view>
-                <view class="user-count">{{userCount - 1}}观看</view>
+    <view wx:if="{{isNative}}">
+        <live-pusher wx:if="{{isCaster}}" id="zg-pusher" url="{{mainPusher.url}}" class="push-content" muted="{{mainPusher.isMute}}" waiting-image="{{waitingImage}}" beauty="{{beauty}}" whiteness="{{whiteness}}" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange" binderror="onPushError"></live-pusher>
+        <live-player wx:if="{{!isCaster && mainPusher.url}}" id="{{mainPusher.streamID}}" src="{{mainPusher.url}}" object-fit="fillCrop" class="play-content" bindstatechange="onPlayStateChange" bindnetstatus="onPlayNetStateChange"></live-player>
+        <view wx:if="{{playStreamList.length || subPusher.url}}" class="sub-video" style="top:{{userTop}}px">
+            <live-pusher wx:if="{{!isCaster && subPusher.url}}" url="{{subPusher.url}}" autopush="{{true}}" class="small-video" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange" binderror="onPushError"></live-pusher>
+            <view wx:if="{{playStreamList.length}}" class="play-container" wx:for="{{playStreamList}}" wx:key="streamID">
+                <live-player src="{{item.playUrl}}" id="{{item.streamID}}" autoplay="{{true}}" object-fit="fillCrop" class="small-video">
+                </live-player>
+                <image wx:if="{{isCaster}}" class="close-icon" data-userid="{{item.anchorID}}" bindtap="endLive" src="../images/close-play.png"></image>
             </view>
+        </view>
+    </view>
+    <view wx:else>
+        <zego-pusher wx:if="{{isCaster}}" id="zg-pusher" url="{{mainPusher.url}}" class="push-content" muted="{{mainPusher.isMute}}" waitingImage="{{waitingImage}}" beauty="{{beauty}}" whiteness="{{whiteness}}" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange"></zego-pusher>
+        <zego-player wx:if="{{!isCaster}}" id="zg-player" sid="{{mainPusher.streamID}}" url="{{mainPusher.url}}" objectFit="fillCrop" class="play-content" bindstatechange="onPlayStateChange" bindnetstatus="onPlayNetStateChange"></zego-player>
+        <view wx:if="{{playStreamList.length || subPusher.url}}" class="sub-video" style="top:{{userTop}}px">
+            <zego-pusher wx:if="{{!isCaster && subPusher.url}}" url="{{subPusher.url}}" autopush="{{true}}" width="90" height="120" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange"></zego-pusher>
+            <view wx:if="{{playStreamList.length}}" class="play-container" wx:for="{{playStreamList}}" wx:key="streamID">
+                <zego-player url="{{item.playUrl}}" sid="{{item.streamID}}" autoplay="{{true}}" width="90" height="120">
+                </zego-player>
+                <image wx:if="{{isCaster}}" class="close-icon" data-userid="{{item.anchorID}}" bindtap="endLive" src="../images/close-play.png"></image>
+            </view>
+        </view>
+    </view>
+    
+    <view class="user-info" wx:if="{{userTop > 0}}" style="top:{{userTop}}px">
+        <image class="avatar" src="{{avatarUrl}}" bindload="" binderror=""></image>
+        <view class="user-text">
+            <view class="">{{stringUtil.substr(nickName,8)}}</view>
+            <view class="user-count">{{userCount - 1}}观看</view>
+        </view>
     </view>
     <view class="new-msg">
         <view class="new-one" style="bottom:{{newBot}}rpx" wx:if="{{newestName}}">
@@ -26,7 +48,7 @@
     </view>
     <view class="modal-hide" bind:tap="clickFull"></view>
     <view class="bot-bg" style="height:{{meBot}}rpx"></view>
-    <view class="mmprise" style="bottom:{{mmBot}}rpx">
+    <view wx:if="{{!showBeauty}}" class="mmprise" style="bottom:{{mmBot}}rpx">
         <view wx:if="{{!inputShow}}" class="mmprise-con">
             <view class='merchandise-img' bindtap="showMerchandise">
                 <image src='../images/merchandise.png'></image>
@@ -42,7 +64,16 @@
                     <image class="img" src='../images/switchCamera.png'></image>
                 </view>
                 <view class='img-box' bindtap="enableMute">
-                    <image class="img" src='../images/{{pushConfig.isMute ? "mute" : "noMute"}}.png'></image>
+                    <image class="img" src='../images/{{mainPusher.isMute ? "mute" : "noMute"}}.png'></image>
+                </view>
+                <view class='img-box' bindtap="toggleShowBeauty">
+                    <image class="img" src='../images/beauty-setting.png'></image>
+                </view>
+            </view>
+            <view wx:if="{{loginType==='audience'}}" class="operate">
+                <view class='img-box' bindtap="requestJoinLive">
+                    <!-- <image class="img" src='../images/{{beginToPublish ? "noJoin" : (reachStreamLimit == true ? "noJoin" : (isPublishing == true ? "endJoin" : "join"))}}.png'></image> -->
+                    <image class="img" src='../images/{{isPublishing == true ? "endJoin" : "join"}}.png'></image>
                 </view>
             </view>
         </view>
@@ -56,4 +87,24 @@
             </view>
         </view>
     </view>
+    <view wx:if="{{showBeauty}}" class='moreTool'>
+        <view class="moreToolHeader">
+            <view class="head-left">
+                <image class="beauty-icon" mode="aspectFit" src="../images/beauty-icon.png" />
+                <view class="beauty-text">美颜设置</view>
+            </view>
+            <image class="icon moreToolHeaderIco" mode="aspectFit" src="../images/beauty-close.png" bindtap="toggleShowBeauty" />
+        </view>
+        <view class="moreToolBody">
+            <view class="beauty-item">
+                <view class="beautyLabel">美颜</view>
+                <slider block-size="16" backgroundColor="rgba(255, 255, 255, 0.4)" activeColor="#fff" min="0" max="9" step="1" value="{{beauty}}" class="beauty-slide" show-value bindchange="handleChangeBeauty" />
+            </view>
+            <view class="beauty-item">
+                <view class="beautyLabel">美白</view>
+                <slider block-size="16" backgroundColor="rgba(255, 255, 255, 0.4)" activeColor="#fff" min="0" max="9" value="{{whiteness}}" class="beauty-slide" show-value bindchange="handleChangeWhiteness" />
+            </view>
+        </view>
+    </view>
+    <modal isShowModal="{{isShowModal}}" top="{{userTop}}" showDesc="{{showDesc}}" hasConfirm="{{hasConfirm}}" hasCancel="{{hasCancel}}" confirmText="{{confirmText}}" cancelText="{{cancelText}}" bindconfirm="confirm" bindcancel="cancel"></modal>
 </view>

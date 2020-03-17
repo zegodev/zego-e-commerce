@@ -3,8 +3,22 @@
     <view class="room-title">{{roomShowName}}</view>
 </zego-nav>
 <view class="live-container">
-    <live id="live-room" navBarHeight="{{navBarHeight}}" zegoAppID="{{zegoAppID}}" userID="{{userID}}" token="{{token}}" loginType="{{loginType}}" logServerURL="{{logServerURL}}" roomID="{{roomID}}" bindRoomEvent="onRoomEvent"></live>
-    <view class="modals modals-bottom-dialog" hidden="{{hideModal}}">
+        <live 
+            id="live-room" 
+            navBarHeight="{{navBarHeight}}" 
+            liveAppID="{{liveAppID}}" 
+            userID="{{userID}}" 
+            isLiving="{{isLiving}}" 
+            token="{{token}}" 
+            loginType="{{loginType}}" 
+            wsServerURL="{{wsServerURL}}"
+            logServerURL="{{logServerURL}}" 
+            roomID="{{roomID}}" 
+            preferPublishSourceType="{{preferPublishSourceType}}"
+            preferPlaySourceType="{{preferPlaySourceType}}"
+            bindRoomEvent="onRoomEvent">
+        </live>
+        <view class="modals modals-bottom-dialog" hidden="{{hideModal}}">
         <!-- <view class="modals-cancel" bindtap="hideModal"></view> -->
         <view class="bottom-dialog-body bottom-pos" animation="{{animationData}}">
             <view class="merchandise-container">

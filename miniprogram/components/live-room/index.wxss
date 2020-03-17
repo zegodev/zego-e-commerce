@@ -203,3 +203,94 @@
     font-size: 18rpx;
     text-align: center;
 }
+.moreTool {
+	position: fixed;
+	width: 702rpx;
+    height: 316rpx;
+    left: 24rpx;
+    bottom: 24rpx;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16rpx;
+    color: #fff;
+	display: flex;
+    flex-direction: column;
+    z-index: 3;
+    padding-top: 30rpx;
+	transition: all .25s 0s ease-in-out;
+}
+
+.moreToolHeader {
+    display: flex;
+    height: 56rpx;
+    padding: 0 22rpx 0 40rpx;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+.head-left {
+    display: flex;
+}
+.beauty-icon {
+    width: 44rpx;
+    height: 44rpx;
+}
+.beauty-text {
+    font-size: 30rpx;
+    color: #fff;
+}
+/* .moreToolHeader > view {
+	padding: 20px;
+	flex: 0 0 auto;
+}
+
+.moreToolHeader > image {
+	padding: 20px;
+	flex: 0 0 auto;
+} */
+
+.moreToolHeaderIco {
+	width: 56rpx;
+	height: 56rpx;
+}
+.beauty-item {
+    display: flex;
+    align-items: center;
+}
+.beautyLabel {
+	color: rgba(255, 255, 255, 1);
+	font-size: 28rpx;
+    margin-left: 20px;
+    display: inline-block;
+}
+.beauty-slide {
+    flex: 1;
+    padding: 0;
+}
+.moreToolBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.sub-video {
+    position: fixed;
+    right: 30rpx;
+    z-index: 3;
+    padding-top: 10rpx;
+    padding-right: 10rpx;
+}
+.play-container {
+    width: 190rpx;
+    height: 250rpx;
+    padding-right: 10rpx;
+    padding-top: 10rpx;
+    box-sizing: border-box;
+    position: relative;
+}
+.close-icon {
+    position: absolute;
+    width: 44rpx;
+    height: 44rpx;
+    right: -7rpx;
+    top: -7rpx;
+}

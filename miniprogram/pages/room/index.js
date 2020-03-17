@@ -3,6 +3,9 @@ var plugin = requirePlugin("zego-e-commerce");
 let { sharePage } = require("../../utils/util.js");
 let { getLoginToken } = require("../../utils/server.js");
 
+const app = getApp();
+let { liveAppID } = app.globalData;
+
 let liveRoom;
 let merT = null;
 
@@ -12,9 +15,13 @@ Page({
    * 页面的初始数据
    */
   data: {
-    zegoAppID: 1739272706,
+    isNative: false,
+    liveAppID: liveAppID,
     roomID: "",
+    wsServerURL : "wss://wsliveroom" + liveAppID + "-api.zego.im:8282/ws",
     logServerURL: "https://wsslogger-demo.zego.im/httplog",
+    preferPublishSourceType: 1, // 0：推流到 cdn；1：推流到 bgp
+    preferPlaySourceType: 1, // 0：auto；1：从 bgp 拉流
     loginType: "",
     roomShowName: '',
     token: '',

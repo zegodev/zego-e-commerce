@@ -1,0 +1,18 @@
+<!--components/custom-modal/index.wxml-->
+<view class="modal-con" wx:if="{{isShowModal}}">
+    <view class="modal-mask">
+        <view wx:if="{{top > 0}}" class="modal-box" style="top:{{top}}px; width:{{(!hasConfirm&&!hasCancel)?'440':'690'}}rpx">
+            <view class="modal-box-title" style="padding:30rpx 0" wx:if="{{isShowTitle}}">{{modalTitle}}</view>
+            <input type="{{inputType}}" wx:if="{{isShowInput}}" class="modal-box-input {{isFocus ? 'border' : ''}}" value='{{inputVal}}' placeholder='{{placeholder}}' bindfocus="bindFous" bindblur="bindBlur" bindinput="_bindInput"></input>
+            <view class="show-desc" wx:if="{{showDesc}}" style="text-align:left">{{showDesc}}</view>
+            <view class="flex btn-con">
+                <view wx:if="{{hasConfirm}}" class="flex-1 btn cancel-btn" catchtap='cancel'>
+                    <text>{{cancelText}}</text>
+                </view>
+                <text wx:if="{{hasCancel}}" class="flex-1 btn confirm-btn" catchtap='_confirm'>
+                    <text>{{confirmText}}</text>
+                </text>
+            </view>
+        </view>
+    </view>
+</view>
