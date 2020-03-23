@@ -1,11 +1,14 @@
 // components/live-room/index.js
 let { ZegoClient } = require("../lib/jZego-wx-1.4.0.js");
+const app = getApp();
 
 let zg;
 let zgPusher;
 let zgPlayer;
 let networkOk = true;
 let isLogout = false;
+let logOutTer = null;
+let playingList = [];
 let merT = null;
 let priseTotal = 0;
 let iphoneXX = false;
@@ -21,12 +24,12 @@ Component({
       type: Boolean,
       value: true
     },
-    zegoAppID: {
+    liveAppID: {
       type: Number,
       value: 1739272706,
       observer: function (newVal, oldVal) {
-        // this.data.zegoAppID = newVal;
-        // console.log('zegoAppID')
+        // this.data.liveAppID = newVal;
+        // console.log('liveAppID')
       }
     },
     wsServerURL: {
@@ -157,8 +160,19 @@ Component({
     avatarUrl: "",
     nickName: "",
     playUrl: "",
+    showBeauty: false,
     sid: "",
     isFull: false,
+    isConnecting: false,
+    subPushContext: null,
+    requestId: '',
+    isShowModal: false,
+    showDesc: '',
+    hasConfirm: true,
+    hasCancel: true,
+    confirmText: '同意',
+    cancelText: '拒绝',
+    kitoutUser: ''
   },
   created: function () {
     const sysInfo = wx.getSystemInfoSync();
@@ -171,7 +185,7 @@ Component({
     }
   },
   ready: function () {
-    console.log("ready", this.data.zegoAppID, this.data);
+    console.log("ready", this.data.liveAppID, this.data);
     
   },
   pageLifetimes: {
@@ -198,8 +212,6 @@ Component({
     init () {
       this.getUserInfo();
 
-      zgPusher = this.selectComponent("#zg-pusher");
-      zgPlayer = this.selectComponent("#zg-player");
       console.log("zg", zgPusher, zgPlayer);
       // iphoneX 等机型
       if (iphoneXX) {
@@ -240,12 +252,12 @@ Component({
   
       zg = new ZegoClient();
       zg.config({
-        appid: this.data.zegoAppID, // 必填，应用id，由即构提供
+        appid: this.data.liveAppID, // 必填，应用id，由即构提供
         idName: this.data.userID, // 必填，用户自定义id，全局唯一
         nickName: this.data.userName, // 必填，用户自定义昵称
         remoteLogLevel: 2, // 日志上传级别，建议取值不小于 logLevel
         logLevel: 0, // 日志级别，debug: 0, info: 1, warn: 2, error: 3, report: 99, disable: 100（数字越大，日志越少）
-        server: wsServerURL, // 必填，服务器地址，由即构提供
+        server: this.data.wsServerURL, // 必填，服务器地址，由即构提供
         logUrl: this.data.logServerURL, // 必填，log 服务器地址，由即构提供
         audienceCreateRoom: true // false观众不允许创建房间
       });
@@ -257,7 +269,7 @@ Component({
       );
   
       // 进入房间，自动登录
-      // getLoginToken(this.data.userID, this.data.zegoAppID).then(token => {
+      // getLoginToken(this.data.userID, this.data.liveAppID).then(token => {
       //   console.log("tokenn", token);
       //   this.setData({
       //     token
@@ -312,7 +324,7 @@ Component({
         );
 
         if (type === 1) {
-          self.setPushUrl(url);
+          self.setPushUrl(streamid, url);
         } else {
           self.setPlayUrl(streamid, url);
         }
@@ -549,11 +561,17 @@ Component({
       // 登录成功后，服务器主动推过来的，主播信息
       zg.onGetAnchorInfo = function (anchorId, anchorName) {
         console.log(
-          ">>>[liveroom-room] onGetAnchorInfo, anchorId: " +
+          '>>>[liveroom-room] onGetAnchorInfo, anchorId: ' +
           anchorId +
-          ", anchorName: " +
+          ', anchorName: ' +
           anchorName
         );
+        self.setData({
+          mainPusher: {
+            ...self.data.mainPusher,
+            pusherID: anchorId
+          }
+        })
         if (self.data.loginType === 'audience' && anchorName) {
           try {
             const { avatar: anchorAvatar, nickName: anchorNickName } = JSON.parse(anchorName);
@@ -563,11 +581,11 @@ Component({
               nickName: anchorNickName,
               avatarUrl: anchorAvatar
             });
-          } catch(e) {
+          } catch (e) {
             self.setData({
               anchorID: anchorId,
               nickName: anchorNickName,
-              avatarUrl: "../images/avatar-logo.png"
+              avatarUrl: '../images/avatar-logo.png'
             })
           }
         }
@@ -822,6 +840,7 @@ Component({
               console.log('start');
             }, 10);
           } else {
+            zgPusher = this.selectComponent("#zg-pusher");
             console.log('zgPusher', zgPusher);
             zgPusher.start();
           }
@@ -859,7 +878,7 @@ Component({
           founded = true;
         }
       });
-      console.log(founded);
+      console.log(founded, streamInfo);
       if (!founded) return;
       console.log('pusherID', self.data.mainPusher.pusherID);
       if (streamInfo.anchorID === self.data.mainPusher.pusherID) {
@@ -880,9 +899,11 @@ Component({
               this.data.playerContext.play()
             }, 10)
           } else {
+            console.log('zgPlayer', zgPlayer)
+            zgPlayer = this.selectComponent("#zg-player");
             setTimeout(() => {
               zgPlayer && zgPlayer.play();
-            }, 10)
+            }, 100)
           }
           
         })
@@ -1113,9 +1134,9 @@ Component({
       }
     },
     enableMute() {
-      this.data.pushConfig.isMute = !this.data.pushConfig.isMute;
+      this.data.mainPusher.isMute = !this.data.mainPusher.isMute;
       this.setData({
-        pushConfig: this.data.pushConfig,
+        mainPusher: this.data.mainPusher,
       });
     },
     onComment() {

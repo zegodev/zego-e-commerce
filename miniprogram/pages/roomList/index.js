@@ -1,6 +1,6 @@
 
 let requestRoomListUrl = 'https://liveroom1739272706-api.zego.im/demo/roomlist?appid=1739272706';
-
+const app = getApp();
 
 Page({
   data: {
@@ -53,6 +53,7 @@ Page({
     console.log('id', id);
     console.log('onGotUserInfo', e);
     // store data for next launch use
+    app.globalData.userInfo = userInfo;
     wx.setStorage({
       key: 'userInfo',
       data: userInfo,

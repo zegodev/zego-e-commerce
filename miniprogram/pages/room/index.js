@@ -12,7 +12,7 @@ let merT = null;
 Page({
 
   /**
-   * 页面的初始数据
+   * 页面的初始数据q
    */
   data: {
     isNative: false,
@@ -98,11 +98,11 @@ Page({
    */
   onReady: function () {
     liveRoom = this.selectComponent('#live-room');
-    getLoginToken(this.data.userID, this.data.zegoAppID).then(token => {
-      console.log('token', token)
-      this.setData({
-        token
-      });
+    getLoginToken(this.data.userID, this.data.liveAppID).then(token => {
+      liveRoom = this.selectComponent('#live-room');
+      // liveRoom.startPreview();
+      liveRoom.init();
+      liveRoom.loginRoom(token);
     })
   },
 

@@ -67,6 +67,7 @@
   width: 26vw;
   right: 5vh;
   bottom: 3vh;
+  display: flex;
 }
 
 
@@ -75,7 +76,7 @@
   background-color: rgba(13, 112, 255, 0.8);
   line-height: 2.3em;
   border-radius: 0;
-
+  flex: 1;
 }
 
 

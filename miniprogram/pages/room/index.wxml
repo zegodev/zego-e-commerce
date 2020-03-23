@@ -6,6 +6,7 @@
         <live 
             id="live-room" 
             navBarHeight="{{navBarHeight}}" 
+            isNative="{{isNative}}"
             liveAppID="{{liveAppID}}" 
             userID="{{userID}}" 
             isLiving="{{isLiving}}" 
