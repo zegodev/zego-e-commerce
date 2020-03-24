@@ -1158,16 +1158,16 @@ Component({
         keyboardHold: true,
         inputMessage: "",
       })
-      wx.cloud.init();
-      wx.cloud.callFunction({
-        name:'msgcheck',
-        data:{
-          content: msgContent
-        }
-      }).then(ckres=>{
+      // wx.cloud.init();
+      // wx.cloud.callFunction({
+      //   name:'msgcheck',
+      //   data:{
+      //     content: msgContent
+      //   }
+      // }).then(ckres=>{
       
       //审核通过之后的操作 if == 0
-        if (ckres.result.errCode == 0){
+        // if (ckres.result.errCode == 0){
           let message = {
             id: this.data.userID + Date.parse(new Date()),
             // name: this.data.userID,
@@ -1207,15 +1207,15 @@ Component({
                 }
               });
             });
-        }else{
-          wx.hideLoading();
-          wx.showModal({
-            title: '提醒',
-            content: '请注意言论',
-            showCancel:false
-          })
-        }
-      })
+      //   }else{
+      //     wx.hideLoading();
+      //     wx.showModal({
+      //       title: '提醒',
+      //       content: '请注意言论',
+      //       showCancel:false
+      //     })
+      //   }
+      // })
       
     },
     onNetworkStatus() {
