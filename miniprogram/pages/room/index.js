@@ -50,6 +50,9 @@ Page({
         img: '../../resource/m1.png',
         price: '1599',
         id: 1,
+        link: {
+          path: "../logs/logs",
+        }
       },
       {
         name: 'Vero Moda2020春夏新款褶皱收腰蕾丝拼接雪纺连衣裙',
@@ -267,9 +270,13 @@ Page({
     })
   },
   clickMech(e) {
-    var link = this.data.merchandises[e.currentTarget.id].link;
+    const mer = this.data.merchandises.find(item => item.id == e.currentTarget.id)
+    if (!mer || !mer.link) return;
+    const link = mer.link;
+
     if (link) {
-      const toUrl = link.path + '?url=' + link.extraDatas.url
+      let toUrl = link.path;
+      toUrl += link.extraDatas && link.extraDatas.url ? '?url=' + link.extraDatas.url : '';
       wx.navigateTo({
         url: toUrl,
       });
@@ -278,12 +285,14 @@ Page({
   },
   clickPush() {
     console.log(this.data.pushInx)
-    if (this.data.pushInx == 0) {
-      var link = this.data.merchandises[this.data.pushInx].link;
-      const toUrl = link.path + '?url=' + link.extraDatas.url
-      wx.navigateTo({
-        url: toUrl,
-      });
-    }
+
+    const mer = this.data.merchandises.find(item => item.id == this.data.pushInx)
+    if (!mer || !mer.link) return;
+    const link = mer.link;
+    let toUrl = link.path;
+    toUrl += link.extraDatas && link.extraDatas.url ? '?url=' + link.extraDatas.url : '';
+    wx.navigateTo({
+      url: toUrl,
+    });
   }
 })

@@ -24,7 +24,7 @@
 		"preloadBackgroundData": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.10.1",
+	"libVersion": "2.10.4",
 	"appid": "wxda1343baad77dc86",
 	"projectname": "zego-e-commerce",
 	"debugOptions": {

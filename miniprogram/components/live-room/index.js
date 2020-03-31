@@ -128,7 +128,7 @@ Component({
     },
     playConfig: {
     },
-    
+    pictureInPictureMode: ['push', 'pop'],
     upperStreamLimit: 2, // 房间内限制为最多 4 条流，当流数大于 4 条时，禁止新进入的用户连麦
     inputMessage: "",
     isMessageHide: true,

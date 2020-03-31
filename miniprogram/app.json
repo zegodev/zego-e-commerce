@@ -4,11 +4,12 @@
     "pages/roomList/index",
     "pages/index/index",
     "pages/web/index",
-    "pages/room/index"
+    "pages/room/index",
+    "pages/logs/logs"
   ],
   "plugins": {
     "zego-e-commerce": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "provider": "wx2b8909dae7727f25"
     }
   },
