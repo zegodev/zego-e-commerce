@@ -3,7 +3,7 @@
 <view class="live-room-container">
     <view wx:if="{{isNative}}">
         <live-pusher wx:if="{{isCaster}}" id="zg-pusher" url="{{mainPusher.url}}" class="push-content" muted="{{mainPusher.isMute}}" waiting-image="{{waitingImage}}" beauty="{{beauty}}" whiteness="{{whiteness}}" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange" binderror="onPushError"></live-pusher>
-        <live-player wx:if="{{!isCaster && mainPusher.url}}" id="{{mainPusher.streamID}}" src="{{mainPusher.url}}" object-fit="fillCrop" class="play-content" bindstatechange="onPlayStateChange" bindnetstatus="onPlayNetStateChange"></live-player>
+        <live-player wx:if="{{!isCaster && mainPusher.url}}" id="{{mainPusher.streamID}}" src="{{mainPusher.url}}" object-fit="fillCrop" picture-in-picture-mode="{{pictureInPictureMode}}" class="play-content" bindstatechange="onPlayStateChange" bindnetstatus="onPlayNetStateChange"></live-player>
         <view wx:if="{{playStreamList.length || subPusher.url}}" class="sub-video" style="top:{{userTop}}px">
             <live-pusher wx:if="{{!isCaster && subPusher.url}}" url="{{subPusher.url}}" autopush="{{true}}" class="small-video" bindstatechange="onPushStateChange" bindnetstatus="onPushNetStateChange" binderror="onPushError"></live-pusher>
             <view wx:if="{{playStreamList.length}}" class="play-container" wx:for="{{playStreamList}}" wx:key="streamID">

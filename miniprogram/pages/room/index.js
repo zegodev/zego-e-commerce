@@ -15,7 +15,7 @@ Page({
    * 页面的初始数据q
    */
   data: {
-    isNative: false,
+    isNative: true,
     liveAppID: liveAppID,
     roomID: "",
     wsServerURL : "wss://wsliveroom" + liveAppID + "-api.zego.im:8282/ws",
