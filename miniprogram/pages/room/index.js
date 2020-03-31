@@ -207,10 +207,16 @@ Page({
     }
   },
 
+  // 推送商品
   pushMer(e) {
     const {currentTarget:{dataset:{indx}}} = e;
     console.log(indx);
     liveRoom.pushMer(indx);
+  },
+  // 加入购物车
+  addShoppingCart(e) {
+    const {currentTarget:{dataset:{indx}}} = e;
+    console.log('addShoppingCart ', indx);
   },
   // 显示遮罩层 
   showModal: function() {

@@ -39,10 +39,10 @@
                             </text>
                             <view class="merchandise-action">
                                 <text class="m-price">¥{{item.price}}</text>
-                                <view wx:if="{{loginType === 'anchor'}}" data-indx="{{item.id}}" class="shop-cart" bind:tap="pushMer">
+                                <view wx:if="{{loginType === 'anchor'}}" data-indx="{{item.id}}" class="shop-cart" catch:tap="pushMer">
                                     推送商品
                                 </view>
-                                <view wx:if="{{loginType === 'audience'}}" class="shop-cart">
+                                <view wx:if="{{loginType === 'audience'}}" data-indx="{{item.id}}" class="shop-cart" catch:tap="addShoppingCart">
                                     加入购物车
                                 </view>
                             </view>
