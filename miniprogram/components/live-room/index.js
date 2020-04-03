@@ -128,7 +128,7 @@ Component({
     },
     playConfig: {
     },
-    
+
     upperStreamLimit: 2, // 房间内限制为最多 4 条流，当流数大于 4 条时，禁止新进入的用户连麦
     inputMessage: "",
     isMessageHide: true,
@@ -186,30 +186,24 @@ Component({
   },
   ready: function () {
     console.log("ready", this.data.liveAppID, this.data);
-    
+
   },
-  pageLifetimes: {
-    show: function () {
-      // 页面被展示
-      console.log('page show', zg);
-      // if (zg) {
-        // zg.setUserStateUpdate(true);
-        // this.loginRoom(this.data.token);
-      // }
+  lifetimes: {
+    attached() {
+      console.log('live-room attached');
     },
-    hide: function () {
-      // 页面被隐藏
-      console.log('page hide');
-      // if (zg) {
-      //   this.logoutRoom();
-      // }
-    },
+    detached() {
+      console.log('live-room detached');
+      if (zg) {
+        this.logoutRoom();
+      }
+    }
   },
   /**
    * 组件的方法列表
    */
   methods: {
-    init () {
+    init() {
       this.getUserInfo();
 
       console.log("zg", zgPusher, zgPlayer);
@@ -228,7 +222,7 @@ Component({
       this.setData({
         userTop
       });
-  
+
       let timestamp = new Date().getTime();
       const nickName = this.data.userInfo.nickName ? this.data.userInfo.nickName : 'xcxU' + timestamp;
       const avatar = this.data.userInfo.avatarUrl ? this.data.userInfo.avatarUrl : '../images/avatar-logo.png';
@@ -249,7 +243,7 @@ Component({
           nickName: nickName
         })
       }
-  
+
       zg = new ZegoClient();
       zg.config({
         appid: this.data.liveAppID, // 必填，应用id，由即构提供
@@ -261,13 +255,13 @@ Component({
         logUrl: this.data.logServerURL, // 必填，log 服务器地址，由即构提供
         audienceCreateRoom: true // false观众不允许创建房间
       });
-  
+
       this.bindCallBack(); //监听zego-sdk回调
-  
+
       console.log(
         ">>>[liveroom-room] publishStreamID is: " + this.data.publishStreamID
       );
-  
+
       // 进入房间，自动登录
       // getLoginToken(this.data.userID, this.data.liveAppID).then(token => {
       //   console.log("tokenn", token);
@@ -278,7 +272,7 @@ Component({
       console.log('token', this.data.token)
       // this.loginRoom(this.data.token);
       // });
-  
+
       this.onNetworkStatus();
       // 保持屏幕常亮
       wx.setKeepScreenOn({
@@ -292,7 +286,7 @@ Component({
         hasUserInfo: true,
         userInfo: userInfo
       });
-      if(!userInfo) {
+      if (!userInfo) {
         wx.getUserInfo({
           success: res => {
             app.globalData.userInfo = res.userInfo;
@@ -463,49 +457,49 @@ Component({
           });
         }
       },
-      // 接收可靠消息
-      zg.onRecvReliableMessage = function (type, seq, data) {
-        console.log('onRecvReliableMessage', type);
-        if (self.data.loginType === 'audience' && type === 'merchandise') {
-          const merArr = data.split('&');
-          const merIndex = parseInt(merArr[0]);
-          const merTime = parseInt(merArr[1]);
-          console.log('merchandise', merIndex);
-          const content = {
-            indx: merIndex,
-            merTime,
-            merBot: self.data.mmBot + 140
-          }
-          self.triggerEvent('RoomEvent', {
-            tag: 'onRecvMer',
-            // code: 0,
-            content
-          });
-          console.log(!!merT);
-          if (merT) {
-            clearTimeout(merT);
-            merT = null;
-          } else {
-            self.data.meBot += 120;
-            self.data.newBot += 120;
-            self.setData({
-              meBot: self.data.meBot,
-              newBot: self.data.newBot
+        // 接收可靠消息
+        zg.onRecvReliableMessage = function (type, seq, data) {
+          console.log('onRecvReliableMessage', type);
+          if (self.data.loginType === 'audience' && type === 'merchandise') {
+            const merArr = data.split('&');
+            const merIndex = parseInt(merArr[0]);
+            const merTime = parseInt(merArr[1]);
+            console.log('merchandise', merIndex);
+            const content = {
+              indx: merIndex,
+              merTime,
+              merBot: self.data.mmBot + 140
+            }
+            self.triggerEvent('RoomEvent', {
+              tag: 'onRecvMer',
+              // code: 0,
+              content
             });
+            console.log(!!merT);
+            if (merT) {
+              clearTimeout(merT);
+              merT = null;
+            } else {
+              self.data.meBot += 120;
+              self.data.newBot += 120;
+              self.setData({
+                meBot: self.data.meBot,
+                newBot: self.data.newBot
+              });
+            }
+
+            merT = setTimeout(() => {
+              self.data.meBot -= 120;
+              self.data.newBot -= 120;
+              self.setData({
+                meBot: self.data.meBot,
+                newBot: self.data.newBot
+              });
+              clearTimeout(merT);
+              merT = null;
+            }, merTime * 1000);
           }
-          
-          merT = setTimeout(() => {
-            self.data.meBot -= 120;
-            self.data.newBot -= 120;
-            self.setData({
-              meBot: self.data.meBot,
-              newBot: self.data.newBot
-            });
-            clearTimeout(merT);
-            merT = null;
-          }, merTime * 1000);
         }
-      }
 
       // 服务端主动推过来的 流的质量更新
       zg.onPublishQualityUpdate = function (streamID, streamQuality) {
@@ -603,12 +597,12 @@ Component({
         const latest = audienceList.pop();
 
         if (latest) {
-          
+
           let userInfo;
           try {
             userInfo = JSON.parse(latest.nickName);
-          } catch(e) {
-            userInfo = { 
+          } catch (e) {
+            userInfo = {
               avatar: '../images/avatar-logo.png',
               nickName: latest.nickName
             }
@@ -705,23 +699,30 @@ Component({
           // 主播登录
           if (self.data.loginType === "anchor") {
             if (streamList && streamList.length) {
-              // 房间内已有流, 退出
-              wx.showModal({
-                title: "提示",
-                content: "主播已存在，请退出",
-                showCancel: false,
-                success(res) {
-                  if (res.confirm || !res.cancel) {
-                    // wx.navigateBack();
-                    const content = {};
-                    self.triggerEvent("RoomEvent", {
-                      tag: "onBack",
-                      content
-                    });
-                  }
-                }
+              let isAnchor = false;
+              streamList.forEach(item => {
+                item.anchor_id_name === self.data.userID && (isAnchor = true);
               });
-              return;
+              console.log('isAnchor', isAnchor);
+              // 房间内已有流, 退出
+              if (!isAnchor) {
+                wx.showModal({
+                  title: "提示",
+                  content: "主播已存在，请退出",
+                  showCancel: false,
+                  success(res) {
+                    if (res.confirm || !res.cancel) {
+                      // wx.navigateBack();
+                      const content = {};
+                      self.triggerEvent("RoomEvent", {
+                        tag: "onBack",
+                        content
+                      });
+                    }
+                  }
+                });
+                return;
+              }
             }
             console.log(
               ">>>[liveroom-room] anchor startPublishingStream, publishStreamID: " +
@@ -823,15 +824,15 @@ Component({
       // 主播推流
       if (this.data.isCaster) {
         this.setData({
-            mainPusher: {
-              ...this.data.mainPusher,
-              ... {
-                streamID,
-                url: url
-              }
+          mainPusher: {
+            ...this.data.mainPusher,
+            ... {
+              streamID,
+              url: url
             }
+          }
         }, () => {
-          if(this.data.isNative) {
+          if (this.data.isNative) {
             // (!this.data.pusherContext) && (this.data.pusherContext = wx.createLivePusherContext());
             this.data.pusherContext = wx.createLivePusherContext();
             // this.data.pusherContext.stop();
@@ -856,7 +857,7 @@ Component({
           }
         })
       }
-      
+
     },
 
     setPlayUrl(streamid, url) {
@@ -866,7 +867,7 @@ Component({
         console.log('>>>[liveroom-room] setPlayUrl, url is null');
         return;
       }
-    
+
       let founded = false, isHost = false;
       let streamInfo = {};
       console.log('playingList', playingList.length);
@@ -905,7 +906,7 @@ Component({
               zgPlayer && zgPlayer.play();
             }, 100)
           }
-          
+
         })
       } else {
         self.data.playStreamList.push(streamInfo);
@@ -960,7 +961,7 @@ Component({
             playingList.push(streamList[i]);
             console.log('playingList', playingList);
             zg.startPlayingStream(streamID);
-            
+
           }
         }
       }
@@ -987,7 +988,7 @@ Component({
           if (self.data.isNative) {
             self.data.playerContext && self.data.playerContext.stop();
           } else {
-            zgPlayer && zgPlayer.stop();         
+            zgPlayer && zgPlayer.stop();
           }
           self.setData({
             mainPusher: {
@@ -1040,7 +1041,7 @@ Component({
             }
           }, 10000);
           break;
-   
+
         } else {
           let playStreamList = self.data.playStreamList;
           for (let j = 0; j < playStreamList.length; j++) {
@@ -1165,48 +1166,48 @@ Component({
       //     content: msgContent
       //   }
       // }).then(ckres=>{
-      
+
       //审核通过之后的操作 if == 0
-        // if (ckres.result.errCode == 0){
-          let message = {
-            id: this.data.userID + Date.parse(new Date()),
-            // name: this.data.userID,
-            name: '我',
-            color: "#FF4EB2",
-            // time: new Date().format("hh:mm:ss"),
-            content: msgContent,
-          };
-    
-          console.log('>>>[liveroom-room] currentMessage', msgContent);
-    
-          self.data.messageList.push(message);
-    
-          self.setData({
-            messageList: self.data.messageList,
-            scrollToView: message.id,
+      // if (ckres.result.errCode == 0){
+      let message = {
+        id: this.data.userID + Date.parse(new Date()),
+        // name: this.data.userID,
+        name: '我',
+        color: "#FF4EB2",
+        // time: new Date().format("hh:mm:ss"),
+        content: msgContent,
+      };
+
+      console.log('>>>[liveroom-room] currentMessage', msgContent);
+
+      self.data.messageList.push(message);
+
+      self.setData({
+        messageList: self.data.messageList,
+        scrollToView: message.id,
+      });
+
+      zg.sendBigRoomMessage(1, 1, message.content,
+        function (seq, msgId, msg_category, msg_type, msg_content) {
+          console.log('>>>[liveroom-room] onComment success');
+        },
+        function (err, seq, msg_category, msg_type, msg_content) {
+          console.log('>>>[liveroom-room] onComment, error: ');
+          console.log(err);
+          wx.showModal({
+            title: '提示',
+            content: '发送消息失败',
+            showCancel: false,
+            success(res) {
+              // 用户点击确定，或点击安卓蒙层关闭
+              if (res.confirm || !res.cancel) {
+                // 强制用户退出
+                // wx.navigateBack();
+                // zg.logout();
+              }
+            }
           });
-    
-          zg.sendBigRoomMessage(1, 1, message.content,
-            function (seq, msgId, msg_category, msg_type, msg_content) {
-              console.log('>>>[liveroom-room] onComment success');
-            },
-            function (err, seq, msg_category, msg_type, msg_content) {
-              console.log('>>>[liveroom-room] onComment, error: ');
-              console.log(err);
-              wx.showModal({
-                title: '提示',
-                content: '发送消息失败',
-                showCancel: false,
-                success(res) {
-                  // 用户点击确定，或点击安卓蒙层关闭
-                  if (res.confirm || !res.cancel) {
-                    // 强制用户退出
-                    // wx.navigateBack();
-                    // zg.logout();
-                  }
-                }
-              });
-            });
+        });
       //   }else{
       //     wx.hideLoading();
       //     wx.showModal({
@@ -1216,7 +1217,7 @@ Component({
       //     })
       //   }
       // })
-      
+
     },
     onNetworkStatus() {
       console.log('onNetworkStatus');

@@ -97,20 +97,26 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-    liveRoom = this.selectComponent('#live-room');
+    console.warn('onReady');
     getLoginToken(this.data.userID, this.data.liveAppID).then(token => {
       liveRoom = this.selectComponent('#live-room');
-      // liveRoom.startPreview();
       liveRoom.init();
       liveRoom.loginRoom(token);
-    })
+    });
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    console.warn('onShow');
+    if (liveRoom) {
+      getLoginToken(this.data.userID, this.data.liveAppID).then(token => {
+        liveRoom = this.selectComponent('#live-room');
+        liveRoom.init();
+        liveRoom.loginRoom(token);
+      });
+    }
   },
 
   /**
