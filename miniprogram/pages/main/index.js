@@ -1,6 +1,3 @@
-// let {sharePage} = require('../../utils/util.js');
-
-
 
 Page({
 
@@ -10,36 +7,17 @@ Page({
     data: {
         canShow: -1,
         entryInfos: [
-            // {
-            //     icon: "../../resource/interactionLive.png",
-            //     subtitle: '主播',
-            //     title: "视频直播",
-            //     navigateTo: "../anchor/index"
-            // },
             {
                 icon: "../../resource/interactionLive.png",
-                subtitle: '列表',
+                subtitle: '示例',
                 title: "电商直播",
                 navigateTo: "../roomList/index"
             },
-            // {
-            //     icon: "../../resource/interactionLive.png",
-            //     subtitle: 'test',
-            //     title: "视频直播",
-            //     navigateTo: "../test/test"
-            // },
-            // {
-            //     icon: "../../resource/interactionLive.png",
-            //     subtitle: 'test2',
-            //     title: "视频直播",
-            //     navigateTo: "../test2/test"
-            // },
         ]
     },
 
     onEntryTap(e) {
         if (this.data.canShow) {
-            // if(1) {
             // 防止两次点击操作间隔太快
             var nowTime = new Date();
             if (nowTime - this.data.tapTime < 1000) {
@@ -66,46 +44,28 @@ Page({
     onLoad(options) {
         console.log(">>> main onLoad");
 
-        // var type = options.type;
-        // var type = 'liveroomlist';
-        // if (type == 'liveroomlist') {
-        //     // 从列表页分享出的卡片进入
-        //     wx.navigateTo({
-        //         url: '/pages/roomList/index',
-        //     });
-        // } else if (type == 'liveroom') {
-        //     // 从互动直播页分享出的卡片进入
-        //     var roomID = options.roomID;
-        //     var loginType = options.loginType;
-        //     var url = '/pages/room/index?roomId=' + roomID + '&roomName=' + roomID + '&loginType=' + loginType;
-        //     console.log(">>>[main onLoad] try navigate to: ", url);
-        //     wx.navigateTo({
-        //         url: url,
-        //     });
-        // }
-
     },
 
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
     onReady() {
-        console.log("onReady");
+        console.log(">>> main onReady");
     },
 
 
     /**
-     * 生命周期函数--监听页面显示
+     * 生命周期函数--监听页面显示 
      */
     onShow() {
-        console.log("onShow");
+        console.log(">>> main onShow");
     },
 
     /**
      * 生命周期函数--监听页面隐藏
      */
     onHide() {
-        console.log("onHide");
+        console.log(">>> main onHide");
 
     },
 
@@ -113,36 +73,7 @@ Page({
      * 生命周期函数--监听页面卸载
      */
     onUnload() {
-        console.log("onUnload");
-
+        console.log(">>> main onUnload");
     },
-
-    /**
-     * 页面相关事件处理函数--监听用户下拉动作
-     */
-    onPullDownRefresh() {
-        console.log("onPullDownRefresh");
-
-    },
-
-    /**
-     * 页面上拉触底事件的处理函数
-     */
-    onReachBottom() {
-        console.log("onReachBottom");
-
-    },
-
-    /**
-     * 用户点击右上角分享
-     */
-    onShareAppMessage() {
-        console.log("onShareAppMessage");
-        return sharePage();
-    },
-
-    settingCallback({detail}) {
-         this.authCheck();
-    }
 
 });

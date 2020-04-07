@@ -5,7 +5,7 @@
     "pages/index/index",
     "pages/web/index",
     "pages/room/index",
-    "pages/logs/logs"
+    "pages/merchandise/index"
   ],
   "plugins": {
     "zego-e-commerce": {

@@ -1,0 +1,4 @@
+<!--index.wxml-->
+<view class="container log-list">
+  <view>商品测试页</view>
+</view>
