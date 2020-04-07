@@ -19,16 +19,6 @@ Component({
     },
 
     ready() {
-        // let systemInfo = wx.getSystemInfoSync();
-        // let rect = wx.getMenuButtonBoundingClientRect();
-        // // console.log(rect.top, systemInfo.statusBarHeight);
-        // let gap = rect.top - systemInfo.statusBarHeight; //动态计算每台手机状态栏到胶囊按钮间距
-        // let navBarHeight = gap + rect.bottom;
-        // // console.log('navBarHeight', rect, navBarHeight);
-        // this.setData({
-        //     navBarHeight,
-        //     statusBarHeight: systemInfo.statusBarHeight
-        // });
     },
     /**
      * 组件的方法列表

@@ -28,8 +28,6 @@ Component({
       type: Number,
       value: 1739272706,
       observer: function (newVal, oldVal) {
-        // this.data.liveAppID = newVal;
-        // console.log('liveAppID')
       }
     },
     wsServerURL: {
@@ -52,7 +50,6 @@ Component({
       type: String,
       value: "",
       observer: function (newVal, oldVal, changedPath) {
-        // this.setData({ items: newVal });
       }
     },
     userID: {
@@ -65,9 +62,6 @@ Component({
       observer: function (newVal, oldVal, changedPath) {
         if (newVal !== '') {
           this.loginRoom(newVal);
-          // this.setData({
-          //   token: newVal
-          // })
         }
       }
     },
@@ -79,17 +73,6 @@ Component({
       type: Number,
       value: 1
     },
-    // avatar: {
-    //   type: String,
-    //   value: ""
-    // },
-    // nickName: {
-    //   type: String,
-    //   value: "",
-    //   observer: function (newVal, oldVal) {
-    //     // this.data.userName = newVal;
-    //   }
-    // },
     navBarHeight: {
       type: Number,
       value: 0
@@ -100,16 +83,10 @@ Component({
    */
   data: {
     isCaster: true,
-    // loginType: '', // 登录类型。anchor：主播；audience：观众
-    // roomID: "",             // 房间 ID
     roomName: "", // 房间名
-    // userID: "", // 当前初始化的用户 ID
     userName: "", // 当前初始化的用户名
     anchorID: "", // 主播 ID
-    // anchorName: "", // 主播名
-    // anchorStreamID: "", // 主播推流的流 ID
     publishStreamID: "", // 推流 ID
-    // pusherVideoContext: null, // live-pusher Context，内部只有一个对象
     playStreamList: [], // 拉流流信息列表，列表中每个对象结构为 {anchorID:'xxx', streamID:'xxx', playContext:{}, playUrl:'xxx', playingState:'xxx'}
     beginToPublish: false, // 准备连麦标志位
     reachStreamLimit: false, // 房间内达到流上限标志位
@@ -137,8 +114,6 @@ Component({
 
     requestJoinLiveList: [],    // 请求连麦的成员列表
     messageList: [], // 消息列表，列表中每个对象结构为 {name:'xxx', time:xxx, content:'xxx'}
-    // priseCount: 0,
-    // priseTapTime: "",
     userCount: 1,
     reMsgCount: 0,
     imColors: ["#FFC000", "#AAFF6C", "#63E3FF", "#FF7920"],
@@ -232,7 +207,6 @@ Component({
       }
       this.setData({
         roomName: this.data.roomID,
-        // userID: "xcxU" + timestamp,
         userName: JSON.stringify(nickAvatar),
         publishStreamID: "xcxS" + timestamp,
         isCaster: this.data.loginType !== 'audience'
@@ -253,7 +227,7 @@ Component({
         logLevel: 0, // 日志级别，debug: 0, info: 1, warn: 2, error: 3, report: 99, disable: 100（数字越大，日志越少）
         server: this.data.wsServerURL, // 必填，服务器地址，由即构提供
         logUrl: this.data.logServerURL, // 必填，log 服务器地址，由即构提供
-        audienceCreateRoom: true // false观众不允许创建房间
+        audienceCreateRoom: false // false观众不允许创建房间
       });
 
       this.bindCallBack(); //监听zego-sdk回调
@@ -262,16 +236,8 @@ Component({
         ">>>[liveroom-room] publishStreamID is: " + this.data.publishStreamID
       );
 
-      // 进入房间，自动登录
-      // getLoginToken(this.data.userID, this.data.liveAppID).then(token => {
-      //   console.log("tokenn", token);
-      //   this.setData({
-      //     token
-      //   });
       zg.setUserStateUpdate(true);
       console.log('token', this.data.token)
-      // this.loginRoom(this.data.token);
-      // });
 
       this.onNetworkStatus();
       // 保持屏幕常亮
@@ -336,11 +302,9 @@ Component({
               // 用户点击确定，或点击安卓蒙层关闭
               if (res.confirm || !res.cancel) {
                 // 强制用户退出
-                // wx.navigateBack();
                 const content = {};
                 self.triggerEvent("RoomEvent", {
                   tag: "onBack",
-                  // code: 0,
                   content
                 });
                 zg.logout();
@@ -349,30 +313,6 @@ Component({
           });
         }
       };
-
-      // 接收服务端主推送的自定义信令
-      // zg.onRecvCustomCommand = function (
-      //   from_userid,
-      //   from_idName,
-      //   custom_content
-      // ) {
-      //   console.log(
-      //     ">>>[liveroom-room] zg onRecvCustomCommand" +
-      //     "from_userid: " +
-      //     from_userid +
-      //     "from_idName: " +
-      //     from_idName +
-      //     "content: "
-      //   );
-      //   console.log("prise custom_content", custom_content);
-      //   const { type, detail } = custom_content;
-      //   if (type === "prise") {
-      //     priseTotal += detail;
-      //     // self.setData({
-      //     //   priseCount: self.data.priseCount
-      //     // })
-      //   }
-      // };
 
       // 服务端主动推过来的 流的创建/删除事件；updatedType: { added: 0, deleted: 1 }；streamList：增量流列表
       zg.onStreamUpdated = function (updatedType, streamList) {
@@ -445,7 +385,6 @@ Component({
             : Date.parse(new Date());
           message.content = messageList[i].content;
           message.id = messageList[i].idName + logTime;
-          // message.count = self.data.reMsgCount;
           message.color = self.data.imColors[self.data.reMsgCount % 4];
 
           self.data.messageList.push(message);
@@ -539,7 +478,6 @@ Component({
               // 用户点击确定，或点击安卓蒙层关闭
               if (res.confirm || !res.cancel) {
                 // 强制用户退出
-                // wx.navigateBack();
                 const content = {};
                 self.triggerEvent("RoomEvent", {
                   tag: "onBack",
@@ -635,8 +573,6 @@ Component({
       zg.onRecvJoinLiveRequest = function (requestId, fromUserId, fromUsername, roomId) {
         console.log('>>>[liveroom-room] onRecvJoinLiveRequest, roomId: ' + roomId + 'requestUserId: ' + fromUserId + ', requestUsername: ' + fromUsername);
 
-        // self.data.requestJoinLiveList.push(requestId);
-
         let audienceName;
         try {
           const userInfo = JSON.parse(fromUsername);
@@ -712,7 +648,6 @@ Component({
                   showCancel: false,
                   success(res) {
                     if (res.confirm || !res.cancel) {
-                      // wx.navigateBack();
                       const content = {};
                       self.triggerEvent("RoomEvent", {
                         tag: "onBack",
@@ -740,11 +675,9 @@ Component({
                 showCancel: false,
                 success(res) {
                   if (res.confirm || !res.cancel) {
-                    // wx.navigateBack();
                     const content = {};
                     self.triggerEvent("RoomEvent", {
                       tag: "onBack",
-                      // code: 0,
                       content
                     });
                   }
@@ -771,11 +704,9 @@ Component({
               showCancel: false,
               success(res) {
                 if (res.confirm || !res.cancel) {
-                  // wx.navigateBack();
                   const content = {};
                   self.triggerEvent("RoomEvent", {
                     tag: "onBack",
-                    // code: 0,
                     content
                   });
                 }
@@ -833,9 +764,7 @@ Component({
           }
         }, () => {
           if (this.data.isNative) {
-            // (!this.data.pusherContext) && (this.data.pusherContext = wx.createLivePusherContext());
             this.data.pusherContext = wx.createLivePusherContext();
-            // this.data.pusherContext.stop();
             setTimeout(() => {
               this.data.pusherContext.start();
               console.log('start');
@@ -1001,9 +930,6 @@ Component({
           });
           playingList = playingList.filter(playItem => playItem.stream_id !== streamID);
           if (self.data.isConnecting && self.data.isPublishing) {
-            // zg.endJoinLive(self.data.anchorID, function (result, userID, userName) {
-            //   console.log('>>>[liveroom-room] endJoinLive, result: ' + result);
-            // }, null);
 
             // 停止推流
             zg.stopPublishingStream(self.data.publishStreamID);
@@ -1035,7 +961,6 @@ Component({
               const content = {};
               self.triggerEvent('RoomEvent', {
                 tag: 'onBack',
-                // code: 0,
                 content
               });
             }
@@ -1174,7 +1099,6 @@ Component({
         // name: this.data.userID,
         name: '我',
         color: "#FF4EB2",
-        // time: new Date().format("hh:mm:ss"),
         content: msgContent,
       };
 
@@ -1202,8 +1126,7 @@ Component({
               // 用户点击确定，或点击安卓蒙层关闭
               if (res.confirm || !res.cancel) {
                 // 强制用户退出
-                // wx.navigateBack();
-                // zg.logout();
+
               }
             }
           });
@@ -1384,14 +1307,6 @@ Component({
           // 自己停止推流，不会收到流删减消息，所以此处需要主动调整视图大小
         });
 
-
-        // setTimeout(() => {
-        //     // 回前台重新拉流
-        //     for (let i = 0; i < this.data.playStreamList.length; i++) {
-        //         zg.startPlayingStream(this.data.playStreamList[i]['streamID']);
-        //         this.data.playStreamList[i]['playContext'] && this.data.playStreamList[i]['playContext'].play();
-        //     }
-        // }, 500);
         return;
       }
 

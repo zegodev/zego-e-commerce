@@ -24,21 +24,6 @@ Page({
   },
   onShow: function () {
     this.fetchRoomList();
-    // wx.authorize({
-    //   scope:'scope.userInfo',
-    //   success() {
-    //       console.log('授权成功')
-    //       wx.saveImageToPhotosAlbum({
-    //           filePath: imgPath,
-    //           success(result) {
-    //               console.log('userInfo', result)
-    //           },
-    //           fail(error) {
-    //               console.log('userInfo', error)
-    //           }
-    //       })
-    //   }
-    // })
   },
   addItem: function () {
     this.data.items.push(this.data.currentItem++);
@@ -91,8 +76,7 @@ Page({
     self.setData({
         loginType: 'anchor'
     });
-    // this.getUserInfo();
-    // const url = 'plugin://hello-plugin/live-push?roomID=' + this.data.roomID + '&roomName=' + this.data.roomName + '&loginType=' + 'anchor';
+    
     wx.request({
       url: requestRoomListUrl,
       method: "GET",
@@ -100,9 +84,6 @@ Page({
           console.log(">>>[liveroom-roomList] fetchRoomList before create room, result is: ");
           if (res.statusCode === 200) {
               var roomList = res.data.data.room_list;
-              // self.setData({
-              //     roomList: roomList
-              // })
 
               for (var index in roomList) {
                   if (roomList[index].room_id === self.data.roomID) {
@@ -184,8 +165,7 @@ Page({
         tapTime: nowTime,
         loginType: 'audience'
     },function(){
-        // const url = 'plugin://hello-plugin/live-play?roomID=' + id + '&roomName=' + name + '&loginType=audience';
-        // const url = '../play-room/index?roomID=' + id + '&roomName=' + id + '&loginType=audience';
+        
         const url = '../room/index?roomID=' + id + '&roomName=' + id + '&loginType=audience';
 
         wx.navigateTo({

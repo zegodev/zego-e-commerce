@@ -116,8 +116,6 @@
     width: 100vw;
     height: 126rpx;
     display: flex;
-    /* padding-left: 24rpx; */
-    /* align-items: baseline; */
 }
 .mmprise-con {
     width: 100%;
@@ -238,15 +236,6 @@
     font-size: 30rpx;
     color: #fff;
 }
-/* .moreToolHeader > view {
-	padding: 20px;
-	flex: 0 0 auto;
-}
-
-.moreToolHeader > image {
-	padding: 20px;
-	flex: 0 0 auto;
-} */
 
 .moreToolHeaderIco {
 	width: 56rpx;

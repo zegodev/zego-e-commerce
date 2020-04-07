@@ -55,9 +55,6 @@
             </view>
             <view class='input-button' catchtap="showInput">
                 {{loginType=="anchor"? '跟观众聊聊什么' : '跟主播聊聊什么？'}}
-                <!-- <input placeholder="我要说点什么" placeholder-style='color: #b3b3b3; font-size: 14px;'
-                    bindinput="bindMessageInput"
-                    confirm-type='send' bindconfirm="onComment"/> -->
             </view>
             <view wx:if="{{loginType==='anchor'}}" class="operate">
                 <view class='img-box' bindtap="switchCamera">
@@ -72,7 +69,6 @@
             </view>
             <view wx:if="{{loginType==='audience'}}" class="operate">
                 <view class='img-box' bindtap="requestJoinLive">
-                    <!-- <image class="img" src='../images/{{beginToPublish ? "noJoin" : (reachStreamLimit == true ? "noJoin" : (isPublishing == true ? "endJoin" : "join"))}}.png'></image> -->
                     <image class="img" src='../images/{{isPublishing == true ? "endJoin" : "join"}}.png'></image>
                 </view>
             </view>

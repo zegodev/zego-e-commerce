@@ -2,7 +2,6 @@
   "pages": [
     "pages/main/index",
     "pages/roomList/index",
-    "pages/index/index",
     "pages/web/index",
     "pages/room/index",
     "pages/merchandise/index"

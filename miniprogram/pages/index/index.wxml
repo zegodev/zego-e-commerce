@@ -1,7 +1,0 @@
-<navigator id="nav" url="plugin://zego-e-commerce/hello-page">
-  Go to Plugin page
-</navigator>
-
-<button id="add" bindtap="addItem">Add item</button>
-
-<hello-list items="{{ items }}" />

@@ -12,7 +12,7 @@ let merT = null;
 Page({
 
   /**
-   * 页面的初始数据q
+   * 页面的初始数据
    */
   data: {
     isNative: true,
@@ -137,20 +137,6 @@ Page({
   },
 
   /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
    * 用户点击右上角分享
    */
   onShareAppMessage() {
@@ -247,18 +233,10 @@ Page({
   hideModal: function() {
     console.log('hideModal');
     var that = this;
-    // var animation = wx.createAnimation({
-    //   duration: 800, //动画的持续时间 默认400ms 数值越大，动画越慢 数值越小，动画越快 
-    //   timingFunction: 'linear', //动画的效果 默认值是linear 
-    // })
-    // this.animation = animation
-    // that.fadeDown(); //调用隐藏动画 
-    // setTimeout(function() {
-      that.setData({
-        hideModal: true
-      })
-      that.fadeDown();
-    // }, 720) //先执行下滑动画，再隐藏模块 
+    that.setData({
+      hideModal: true
+    })
+    that.fadeDown();
   },
  
   //动画集 
