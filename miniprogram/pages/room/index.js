@@ -260,7 +260,7 @@ Page({
 
     if (link) {
       let toUrl = link.path;
-      toUrl += link.extraDatas && link.extraDatas.url ? '?url=' + link.extraDatas.url : '';
+      toUrl += link.extraDatas && link.extraDatas.url ? '?url=' + encodeURIComponent(link.extraDatas.url) : '';
       wx.navigateTo({
         url: toUrl,
       });
@@ -274,7 +274,7 @@ Page({
     if (!mer || !mer.link) return;
     const link = mer.link;
     let toUrl = link.path;
-    toUrl += link.extraDatas && link.extraDatas.url ? '?url=' + link.extraDatas.url : '';
+    toUrl += link.extraDatas && link.extraDatas.url ? '?url=' + encodeURIComponent(link.extraDatas.url) : '';
     wx.navigateTo({
       url: toUrl,
     });

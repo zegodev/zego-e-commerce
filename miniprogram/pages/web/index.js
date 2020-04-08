@@ -13,7 +13,7 @@ Page({
    */
   onLoad: function ({url}) {
     this.setData({
-      url
+      url: decodeURIComponent(url)
     })
   },
 

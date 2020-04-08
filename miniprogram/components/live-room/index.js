@@ -194,9 +194,6 @@ Component({
         })
       }
       let userTop = this.data.navBarHeight + 16;
-      this.setData({
-        userTop
-      });
 
       let timestamp = new Date().getTime();
       const nickName = this.data.userInfo.nickName ? this.data.userInfo.nickName : 'xcxU' + timestamp;
@@ -206,6 +203,7 @@ Component({
         avatar: avatar
       }
       this.setData({
+        userTop,
         roomName: this.data.roomID,
         userName: JSON.stringify(nickAvatar),
         publishStreamID: "xcxS" + timestamp,
@@ -248,10 +246,7 @@ Component({
     getUserInfo() {
       let userInfo = app.globalData.userInfo;
       console.log('getUserInfo', userInfo);
-      this.setData({
-        hasUserInfo: true,
-        userInfo: userInfo
-      });
+      
       if (!userInfo) {
         wx.getUserInfo({
           success: res => {
@@ -265,6 +260,11 @@ Component({
             console.error(e);
           }
         })
+      } else {
+        this.setData({
+          hasUserInfo: true,
+          userInfo: userInfo
+        });
       }
 
     },
@@ -505,21 +505,22 @@ Component({
           }
         })
         if (self.data.loginType === 'audience' && anchorName) {
+          let  _anchorNickName, _anchorAvatar;
           try {
             const { avatar: anchorAvatar, nickName: anchorNickName } = JSON.parse(anchorName);
             console.log(anchorAvatar);
-            self.setData({
-              anchorID: anchorId,
-              nickName: anchorNickName,
-              avatarUrl: anchorAvatar
-            });
+            _anchorNickName = anchorNickName
+            _anchorAvatar = anchorAvatar
+            
           } catch (e) {
-            self.setData({
-              anchorID: anchorId,
-              nickName: anchorNickName,
-              avatarUrl: '../images/avatar-logo.png'
-            })
+            _anchorNickName = anchorName
+            _anchorAvatar = '../images/avatar-logo.png'
           }
+          self.setData({
+              anchorID: anchorId,
+              nickName: _anchorNickName,
+              avatarUrl: _anchorAvatar
+          });
         }
       };
 
@@ -1376,14 +1377,13 @@ Component({
         }, function (err, seq) {
           console.log('requestJoinLive err', err, seq);
         });
-        self.setData({
-          kitoutUser: ''
-        });
+
         self.data.playStreamList.forEach(item => {
           zg.stopPlayingStream(item.streamID);
           item['playUrl'] = '';
         })
         self.setData({
+          kitoutUser: '',
           isConnecting: false,
           playStreamList: []
         });

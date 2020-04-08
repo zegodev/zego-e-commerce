@@ -20,7 +20,6 @@
             bindRoomEvent="onRoomEvent">
         </live>
         <view class="modals modals-bottom-dialog" hidden="{{hideModal}}">
-        <!-- <view class="modals-cancel" bindtap="hideModal"></view> -->
         <view class="bottom-dialog-body bottom-pos" animation="{{animationData}}">
             <view class="merchandise-container">
                 <view class="merchandise-head">
