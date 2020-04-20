@@ -4,7 +4,7 @@ let { sharePage } = require("../../utils/util.js");
 let { getLoginToken } = require("../../utils/server.js");
 
 const app = getApp();
-let { liveAppID } = app.globalData;
+let { liveAppID, wsServerURL } = app.globalData;
 
 let liveRoom;
 let merT = null;
@@ -17,8 +17,8 @@ Page({
   data: {
     isNative: false,
     liveAppID: liveAppID,
+    wsServerURL: wsServerURL,
     roomID: "",
-    wsServerURL : "wss://wsliveroom" + liveAppID + "-api.zego.im:8282/ws",
     logServerURL: "https://wsslogger-demo.zego.im/httplog",
     preferPublishSourceType: 1, // 0：推流到 cdn；1：推流到 bgp
     preferPlaySourceType: 1, // 0：auto；1：从 bgp 拉流
