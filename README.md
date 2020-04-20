@@ -36,7 +36,7 @@
 
 ## 4 集成插件+组件
 * 提供了插件+组件模式，在demo 中封装了live-room 组件，可以在页面中引用该组件，该组件使用了“即构电商直播助手”，详见[demo源码](https://github.com/zegodev/zego-e-commerce)
-> 在app.js 中替换liveAppID 和 wsServerURL 为zego 控制台获取的appID 和Server 即可在测试环境中使用
+> 在app.js 中将liveAppID 和 wsServerURL 替换为从zego 控制台获取的appID 和Server， 即可在测试环境中使用
 > 在小程序管理后台即[微信公众平台](https://mp.weixin.qq.com/)的"设置-第三方设置"中选择"添加插件"，在弹出的面板中搜索"即构电商直播助手"，选中插件并添加。
 > 
 > 对于插件的使用者，使用插件前要在小程序工程的app.json中声明需要使用的插件，如下：
@@ -53,6 +53,7 @@
 }
 ```
 > 主播停止推流10秒后，观众退出房间
+> 在开发者工具使用“真机调试”模式iPhone手机可能出现'fail jsapi has no permission'错误，这是开发者工具拉取权限出错，可用“预览”模式
 
 * live-room 组件属性：
 
