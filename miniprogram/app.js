@@ -29,8 +29,8 @@ App({
   },
   globalData: {
     userInfo: null,
-    liveAppID: 1739272706,
-    wsServerURL: "wss://wsliveroom1739272706-api.zego.im:8282/ws",
-    tokenURL: 'https://wsliveroom-alpha.zego.im:8282/token', // 即构提供的测试环境的测试接口，正式环境要由业务服务端实现
+    liveAppID: 1739272706, // 需要替换成您申请的appID
+    wsServerURL: "wss://wsliveroom1739272706-api.zego.im:8282/ws", //即构demo专用，开发者请填写即构邮件发送给你的并替换
+    tokenURL: '', // 该接口由开发者后台自行实现，开发者的 Token 从各自后台获取。Token实现方式参考文档https://doc-zh.zego.im/article/2313，login_token生成示例代码部分。
   }
 })
